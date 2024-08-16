@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour, IGameManager
 
 
 
-
     void OnDestroy() {
         OnGameStateChanged = null;
     }
