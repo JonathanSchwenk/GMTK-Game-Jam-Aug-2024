@@ -9,6 +9,7 @@ public class ServiceManager : MonoBehaviour
     public SaveManager saveManager;
     public AudioManager audioManager;
     public GameManager gameManager;
+    public GamePieceManager gamePieceManager;
     
 
 
@@ -37,6 +38,9 @@ public class ServiceManager : MonoBehaviour
         if (!ServiceLocator.IsRegistered<IGameManager>()) {
             ServiceLocator.Register<IGameManager>(gameManager);
         }
+        if (!ServiceLocator.IsRegistered<IGamePieceManager>()) {
+            ServiceLocator.Register<IGamePieceManager>(gamePieceManager);
+        }
 
     }
 
@@ -54,6 +58,9 @@ public class ServiceManager : MonoBehaviour
         }
         if (ServiceLocator.IsRegistered<IGameManager>()) {
             ServiceLocator.Unregister<IGameManager>();
+        }
+        if (ServiceLocator.IsRegistered<IGamePieceManager>()) {
+            ServiceLocator.Unregister<IGamePieceManager>();
         }
     }
     

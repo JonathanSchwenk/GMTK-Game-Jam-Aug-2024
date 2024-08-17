@@ -35,3 +35,14 @@ public interface IAudioManager {
 public interface IAdManager {
     void LoadRewardedAd();
 }
+
+public interface IGamePieceManager {
+    GamePieceObject activeGamePiece {get; set;}
+    float score {get; set;}
+    float enlargeRemaining {get; set;}
+    float shrinkRemaining {get; set;}
+
+    void Place();
+    void Enlarge();
+    void Shrink();
+}
