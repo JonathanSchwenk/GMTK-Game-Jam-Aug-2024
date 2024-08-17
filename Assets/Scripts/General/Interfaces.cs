@@ -46,3 +46,7 @@ public interface IGamePieceManager {
     void Enlarge();
     void Shrink();
 }
+
+public interface ISpawnManager {
+    Egypt_ObjectDatabase egyptObjects {get; set;}
+}
