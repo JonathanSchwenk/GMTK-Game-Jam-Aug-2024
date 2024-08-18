@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public float score { get; set; }
     public float enlargeRemaining { get; set; }
     public float shrinkRemaining { get; set; }
+    public float curEnlargeValue { get; set; }
+    public float curShrinkValue { get; set; }
 
     private float baseWeight = 1f; // Base weight value
     private float weightMultiplier = 0.05f; // Multiplier to adjust weight scaling
@@ -20,8 +23,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     private Vector3 testOrigin;  // Origin of the sphere cast
 
     private float changeSizeValue = 0.1f; // Value to change the size of the game piece by
-    private float tempEnlargeRemaining;
-    private float tempShrinkRemaining;
+    private float tempEnlargeShrinkValue;
 
     private List<GamePieceObject> curConnectedObjects = new List<GamePieceObject>();
 
@@ -42,13 +44,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             // Get the weight of the active game piece
             AssignWeight();
 
-            // Reduce the enlarge and shrink values by the temporary values
-            enlargeRemaining -= tempEnlargeRemaining;
-            shrinkRemaining -= tempShrinkRemaining;
-
             // Reset the temporary enlarge and shrink values
-            tempEnlargeRemaining = 0;
-            tempShrinkRemaining = 0;
+            tempEnlargeShrinkValue = 0;
 
             // Add the weight of the active game piece to the score
             CalculateScore(activeGamePiece);
@@ -142,10 +139,18 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // Enlarge
     public void Enlarge() {
         if (activeGamePiece != null) {
-            if (enlargeRemaining - tempEnlargeRemaining > 0 && GetWeight(activeGamePiece.gameObject) < weightCap_Max) {
+            if (enlargeRemaining - 1 >= 0 && GetWeight(activeGamePiece.gameObject) < weightCap_Max) {
                 // Enlarge the active game piece
                 activeGamePiece.transform.localScale += new Vector3(changeSizeValue, changeSizeValue, changeSizeValue);
-                tempEnlargeRemaining += 1;
+                
+                tempEnlargeShrinkValue += 1;
+
+                if (tempEnlargeShrinkValue > 0) {
+                    enlargeRemaining = curEnlargeValue - Math.Abs(tempEnlargeShrinkValue);
+                } else {
+                    // if (curShrinkValue - Math.Abs(tempEnlargeShrinkValue))
+                    shrinkRemaining = curShrinkValue - Math.Abs(tempEnlargeShrinkValue);
+                }
             }
         }
     }
@@ -153,10 +158,17 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // Shrink
     public void Shrink() {
         if (activeGamePiece != null) {
-            if (shrinkRemaining - tempShrinkRemaining > 0 && GetWeight(activeGamePiece.gameObject) > weightCap_Min) {
+            if (shrinkRemaining - 1 >= 0 && GetWeight(activeGamePiece.gameObject) > weightCap_Min) {
                 // Shrink the active game piece
                 activeGamePiece.transform.localScale -= new Vector3(changeSizeValue, changeSizeValue, changeSizeValue);
-                tempShrinkRemaining += 1;
+
+                tempEnlargeShrinkValue -= 1;
+
+                if (tempEnlargeShrinkValue < 0) {
+                    shrinkRemaining = curShrinkValue - Math.Abs(tempEnlargeShrinkValue);
+                } else {
+                    enlargeRemaining = curEnlargeValue - Math.Abs(tempEnlargeShrinkValue);
+                }
             }
         }
     }
@@ -165,6 +177,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         score = 0;
         enlargeRemaining = 500;
         shrinkRemaining = 500;
+        tempEnlargeShrinkValue = 0;
     }
 
     // Get Weight

@@ -27,6 +27,9 @@ public class Spawner : MonoBehaviour
 
     // Call from SpawnManager
     public void Spawn() {
+        gamePieceManager.curEnlargeValue = gamePieceManager.enlargeRemaining;
+        gamePieceManager.curShrinkValue = gamePieceManager.shrinkRemaining;
+
         int randomCategoryInt = Random.Range(0, 8);
         // SpawnObject(spawnManager.objectsDatabase.egyptObjects);
         

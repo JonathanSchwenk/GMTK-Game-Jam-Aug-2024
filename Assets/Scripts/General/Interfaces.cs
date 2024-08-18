@@ -41,6 +41,8 @@ public interface IGamePieceManager {
     float score {get; set;}
     float enlargeRemaining {get; set;}
     float shrinkRemaining {get; set;}
+    float curEnlargeValue {get; set;}
+    float curShrinkValue {get; set;}
 
     void Place();
     void Enlarge();
