@@ -10,6 +10,8 @@ public class Spawner : MonoBehaviour
     private ISpawnManager spawnManager;
     private IGamePieceManager gamePieceManager;
 
+    private float targetWidth = 20f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +28,7 @@ public class Spawner : MonoBehaviour
     // Call from SpawnManager
     public void Spawn() {
         int randomCategoryInt = Random.Range(0, 8);
+        // SpawnObject(spawnManager.objectsDatabase.egyptObjects);
         
         switch(randomCategoryInt) {
             case 0:
@@ -59,6 +62,7 @@ public class Spawner : MonoBehaviour
 
     private void SpawnObject(GameObject[] objectsInCategory) {
         int randomObjectInt = Random.Range(0, objectsInCategory.Length);
+        // int randomObjectInt = 7;
         GameObject objectToSpawn = objectsInCategory[randomObjectInt];
         GameObject instatiatedObject = Instantiate(objectToSpawn, transform.position, Quaternion.identity);
 
@@ -67,6 +71,21 @@ public class Spawner : MonoBehaviour
         instatiatedObject.GetComponent<GamePieceObject>().category = objectToSpawn.tag;
         instatiatedObject.GetComponent<GamePieceObject>().weight = 1;
         instatiatedObject.GetComponent<GamePieceObject>().isPlaced = false;
+
+        instatiatedObject.tag = "GamePiece";
+
+        instatiatedObject.AddComponent<Rigidbody>();
+        instatiatedObject.GetComponent<Rigidbody>().useGravity = false;
+        instatiatedObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+
+        instatiatedObject.GetComponent<MeshCollider>().convex = true;
+        instatiatedObject.GetComponent<MeshCollider>().isTrigger = true;
+
+        // Sets the scale so all objects are around same size, do this based off the weight of the object
+        Vector3 size = instatiatedObject.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+        float scaleMultiplier = targetWidth / size.x;
+
+        instatiatedObject.transform.localScale = new Vector3(scaleMultiplier, scaleMultiplier, scaleMultiplier);
 
         // Set the active game piece
        gamePieceManager.activeGamePiece = instatiatedObject.GetComponent<GamePieceObject>();

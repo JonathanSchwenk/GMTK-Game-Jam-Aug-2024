@@ -38,7 +38,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     // Place
     public void Place() {
-        if (activeGamePiece != null) {
+        if (activeGamePiece != null && activeGamePiece.canPlace) {
             // Get the weight of the active game piece
             AssignWeight();
 
@@ -54,6 +54,11 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             CalculateScore(activeGamePiece);
 
             activeGamePiece.isPlaced = true;
+
+            // Reset the active game piece
+            activeGamePiece.gameObject.GetComponent<MeshCollider>().isTrigger = false;
+            Destroy(activeGamePiece.gameObject.GetComponent<Rigidbody>());
+
             activeGamePiece = null;
         }
     }
@@ -137,7 +142,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // Enlarge
     public void Enlarge() {
         if (activeGamePiece != null) {
-            if (enlargeRemaining - tempEnlargeRemaining > 0 && GetWeight() < weightCap_Max) {
+            if (enlargeRemaining - tempEnlargeRemaining > 0 && GetWeight(activeGamePiece.gameObject) < weightCap_Max) {
                 // Enlarge the active game piece
                 activeGamePiece.transform.localScale += new Vector3(changeSizeValue, changeSizeValue, changeSizeValue);
                 tempEnlargeRemaining += 1;
@@ -148,7 +153,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // Shrink
     public void Shrink() {
         if (activeGamePiece != null) {
-            if (shrinkRemaining - tempShrinkRemaining > 0 && GetWeight() > weightCap_Min) {
+            if (shrinkRemaining - tempShrinkRemaining > 0 && GetWeight(activeGamePiece.gameObject) > weightCap_Min) {
                 // Shrink the active game piece
                 activeGamePiece.transform.localScale -= new Vector3(changeSizeValue, changeSizeValue, changeSizeValue);
                 tempShrinkRemaining += 1;
@@ -163,13 +168,13 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     }
 
     // Get Weight
-    private float GetWeight() {
-        Mesh mesh = activeGamePiece.gameObject.GetComponent<MeshFilter>().sharedMesh;
+    public float GetWeight(GameObject localGameObject) {
+        Mesh mesh = localGameObject.GetComponent<MeshFilter>().sharedMesh;
 
         if (mesh != null) {
             // Calculate the size of the mesh using its bounds
             Vector3 size = mesh.bounds.size;
-            Vector3 scaledSize = Vector3.Scale(size, activeGamePiece.gameObject.transform.localScale);
+            Vector3 scaledSize = Vector3.Scale(size, localGameObject.transform.localScale);
             // print("scaledSize: " + scaledSize);
 
             // Calculate a simple volume (or use another method based on your requirements)
@@ -182,13 +187,13 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
             return weight;
         } else {
-            print($"MeshFilter on {activeGamePiece.gameObject.name} does not have a mesh assigned.");
+            print($"MeshFilter on {localGameObject.name} does not have a mesh assigned.");
             return 0f;
         }
     }
 
     // Call this when you, create the game piece, shrink or enlarge, or place the game piece
     private void AssignWeight() {
-        activeGamePiece.weight = GetWeight();
+        activeGamePiece.weight = GetWeight(activeGamePiece.gameObject);
     }
 }

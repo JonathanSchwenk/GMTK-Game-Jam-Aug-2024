@@ -45,6 +45,7 @@ public interface IGamePieceManager {
     void Place();
     void Enlarge();
     void Shrink();
+    float GetWeight(GameObject localGameObject);
 }
 
 public interface ISpawnManager {

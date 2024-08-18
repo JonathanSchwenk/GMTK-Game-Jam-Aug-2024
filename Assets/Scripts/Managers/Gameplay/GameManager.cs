@@ -25,6 +25,13 @@ public class GameManager : MonoBehaviour, IGameManager
         audioManager = ServiceLocator.Resolve<IAudioManager>();
     }
 
+    void Update() {
+        // To Exit the game
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
+    }
+
     // For next game, control more with this game managers state machine to keep everything in one spot
     // Update game state function
     public void UpdateGameState(GameState newState) {
