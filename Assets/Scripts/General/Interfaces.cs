@@ -48,5 +48,5 @@ public interface IGamePieceManager {
 }
 
 public interface ISpawnManager {
-    Egypt_ObjectDatabase egyptObjects {get; set;}
+    ObjectsDatabase objectsDatabase {get; set;}
 }

@@ -37,17 +37,16 @@ public class GamePieceObject : MonoBehaviour
     }
 
     // For testing purposes
-    private void OnMouseDown() {
-        gamePieceManager.activeGamePiece = this;
-    }
+    // private void OnMouseDown() {
+    //     gamePieceManager.activeGamePiece = this;
+    // }
 
     // Move
     private void OnMouseDrag() {
-        print("Dragging");
-        // if (gamePieceManager.activeGamePiece != null) {
+        if (!isPlaced) {
             Vector3 pos = GetMouseWorldPosition(); //- new Vector3(0, Camera.main.transform.position.y, 0);
             transform.position = new Vector3(pos.x, 0, pos.z);
-        // }
+        }
     }
 
     private Vector3 GetMouseWorldPosition() 

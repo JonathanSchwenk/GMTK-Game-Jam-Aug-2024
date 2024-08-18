@@ -51,8 +51,6 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             tempShrinkRemaining = 0;
 
             // Add the weight of the active game piece to the score
-            // TODO: use CalculateScore() function later. I need to somehow see if the object is close to other objects of the same 
-            // category
             CalculateScore(activeGamePiece);
 
             activeGamePiece.isPlaced = true;
@@ -62,23 +60,6 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     // Calculate score
     private void CalculateScore(GamePieceObject gamePiece) {
-        /*
-            Get the objects near the active game piece
-            See if they are of the same category
-            If they are, add some value to a multiplier and then check that object for other objects of the same category near it
-            Make sure that you skip objects that have already been checked
-                Can do this by adding them to a list of checked objects
-
-            Use recursion
-            Start with the active game piece that you just placed
-            Check for objects of the same category near it
-            If there are objects of the same category near it, add some value to a multiplier
-            recurse on the objects of the same category near it
-
-            gamePiece.gameObject.transform.GetChild then get new collider object and check for collisions 
-            if collision, check if it's the same category
-        */
-
         // Need to add self to the list of connected objects because it starts the list
         curConnectedObjects.Add(gamePiece);
 
@@ -86,12 +67,26 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
         // Calculate the score based on the number of connected objects
         float tempRunningWeight = 0;
+        float tempSubtraction = 0;
         for (int i = 0; i < curConnectedObjects.Count; i++) {
-            print("Connected object: " + curConnectedObjects[i].name);
-            print("Connected object weight: " + curConnectedObjects[i].weight);
+            // print("Connected object: " + curConnectedObjects[i].name);
+            // print("Connected object weight: " + curConnectedObjects[i].weight);
             tempRunningWeight += curConnectedObjects[i].weight;
         }
-        score += curConnectedObjects.Count * tempRunningWeight * calculatedWeightMultiplier;
+
+        // Subtract previous chain or weights/objects from the score to not double count
+        // Do this by repeating but leave out the active game piece
+        for (int i = 1; i < curConnectedObjects.Count; i++) {
+            // print("Connected object: " + curConnectedObjects[i].name);
+            // print("Connected object weight: " + curConnectedObjects[i].weight);
+            tempSubtraction += curConnectedObjects[i].weight;
+        }
+
+        float addedWeight = curConnectedObjects.Count * tempRunningWeight * calculatedWeightMultiplier;
+        float subtractedWeight = (curConnectedObjects.Count - 1) * tempSubtraction * calculatedWeightMultiplier;
+
+        // Add new
+        score += addedWeight - subtractedWeight;
 
         // Reset curConnectedObjects
         curConnectedObjects.Clear();
@@ -109,23 +104,14 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         // Find all colliders within the detection radius centered on the object's position
         Collider[] hitColliders = Physics.OverlapSphere(gamePiece.transform.position, detectionRadius);
 
-        print("Detected nearby objects called");
-
-        // // Check if the object has already been checked and skip it if it has
-        // // Don't need to check the first object because it's the active game piece
-        // if (curConnectedObjects.Contains(gamePiece) && gamePiece != activeGamePiece) {
-        //     print("Already checked this object");
-        //     return;
-        // }
-
         foreach (Collider collider in hitColliders) {
             GameObject nearbyObject = collider.gameObject;
 
             // Ignore self
             if (nearbyObject != gamePiece.gameObject && nearbyObject.tag == "GamePiece") {
-                Debug.Log("Nearby object detected: " + nearbyObject.name);
+                // Debug.Log("Nearby object detected: " + nearbyObject.name);
                 if (nearbyObject.GetComponent<GamePieceObject>().category == gamePiece.category) {
-                    Debug.Log("Same category detected: " + nearbyObject.name);
+                    // Debug.Log("Same category detected: " + nearbyObject.name);
 
                     if (!curConnectedObjects.Contains(nearbyObject.GetComponent<GamePieceObject>())) {
                         // Add the nearby object to the list of connected objects
