@@ -9,6 +9,7 @@ public class Spawner : MonoBehaviour
 
     private ISpawnManager spawnManager;
     private IGamePieceManager gamePieceManager;
+    private IPlayingCanvasManager playingCanvasManager;
 
     private float targetWidth = 20f;
 
@@ -17,6 +18,7 @@ public class Spawner : MonoBehaviour
     {
         spawnManager = ServiceLocator.Resolve<ISpawnManager>();
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
+        playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
     }
 
     // Update is called once per frame
@@ -27,8 +29,12 @@ public class Spawner : MonoBehaviour
 
     // Call from SpawnManager
     public void Spawn() {
+        // For properly displaying the remaining enlarge and shrink values
         gamePieceManager.curEnlargeValue = gamePieceManager.enlargeRemaining;
         gamePieceManager.curShrinkValue = gamePieceManager.shrinkRemaining;
+
+        // Starts the countdown for the game piece
+        playingCanvasManager.StartCountdown(10);
 
         int randomCategoryInt = Random.Range(0, 8);
         // SpawnObject(spawnManager.objectsDatabase.egyptObjects);

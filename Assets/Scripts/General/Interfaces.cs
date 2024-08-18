@@ -53,3 +53,9 @@ public interface IGamePieceManager {
 public interface ISpawnManager {
     ObjectsDatabase objectsDatabase {get; set;}
 }
+
+public interface IPlayingCanvasManager {
+    void StartCountdown(float duration);
+    void StopCountdown();
+    float countdownTimer {get; set;}
+}

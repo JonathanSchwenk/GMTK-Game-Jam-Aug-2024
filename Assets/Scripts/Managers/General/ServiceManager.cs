@@ -10,7 +10,9 @@ public class ServiceManager : MonoBehaviour
     public AudioManager audioManager;
     public GameManager gameManager;
     public GamePieceManager gamePieceManager;
-    public SpawnManager spwanManager;
+    public SpawnManager spawnManager;
+    public PlayingCanvasManager playingCanvasManager;
+
     
 
 
@@ -43,7 +45,10 @@ public class ServiceManager : MonoBehaviour
             ServiceLocator.Register<IGamePieceManager>(gamePieceManager);
         }
         if (!ServiceLocator.IsRegistered<ISpawnManager>()) {
-            ServiceLocator.Register<ISpawnManager>(spwanManager);
+            ServiceLocator.Register<ISpawnManager>(spawnManager);
+        }
+        if (!ServiceLocator.IsRegistered<IPlayingCanvasManager>()) {
+            ServiceLocator.Register<IPlayingCanvasManager>(playingCanvasManager);
         }
 
     }
@@ -68,6 +73,9 @@ public class ServiceManager : MonoBehaviour
         }
         if (ServiceLocator.IsRegistered<ISpawnManager>()) {
             ServiceLocator.Unregister<ISpawnManager>();
+        }
+        if (ServiceLocator.IsRegistered<IPlayingCanvasManager>()) {
+            ServiceLocator.Unregister<IPlayingCanvasManager>();
         }
     }
     

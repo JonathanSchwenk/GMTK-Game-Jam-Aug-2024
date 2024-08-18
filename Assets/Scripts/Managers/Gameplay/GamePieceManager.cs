@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Dorkbots.ServiceLocatorTools;
 using UnityEngine;
 
 public class GamePieceManager : MonoBehaviour, IGamePieceManager {
@@ -27,9 +28,11 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     private List<GamePieceObject> curConnectedObjects = new List<GamePieceObject>();
 
+    private IPlayingCanvasManager playingCanvasManager;
 
     // Start is called before the first frame update
     void Start() {
+        playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
         InitRoundStats();
     }
 
@@ -41,6 +44,9 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // Place
     public void Place() {
         if (activeGamePiece != null && activeGamePiece.canPlace) {
+            // Stop the timers coroutine
+            playingCanvasManager.StopCountdown();
+
             // Get the weight of the active game piece
             AssignWeight();
 
