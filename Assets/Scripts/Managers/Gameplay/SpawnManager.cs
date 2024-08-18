@@ -12,6 +12,7 @@ public class SpawnManager : MonoBehaviour, ISpawnManager
     [SerializeField] private Spawner spawner;
 
     private IGamePieceManager gamePieceManager;
+    private IGameManager gameManager;
 
     // TODO: Get gameManager here and only start spawning if the game state is playing
     // But for now start right away
@@ -22,12 +23,13 @@ public class SpawnManager : MonoBehaviour, ISpawnManager
         objectsDatabase = objectsDatabaseLocal;
 
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
+        gameManager = ServiceLocator.Resolve<IGameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gamePieceManager.activeGamePiece == null) {
+        if (gamePieceManager.activeGamePiece == null && gameManager.gameState == GameState.Playing) {
             spawner.Spawn();
         }
     }

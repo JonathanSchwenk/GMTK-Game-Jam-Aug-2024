@@ -36,6 +36,13 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         InitRoundStats();
     }
 
+    private void InitRoundStats() {
+        score = 0;
+        enlargeRemaining = 500;
+        shrinkRemaining = 500;
+        tempEnlargeShrinkValue = 0;
+    }
+
     // Update is called once per frame
     void Update() {
 
@@ -177,13 +184,6 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
                 }
             }
         }
-    }
-
-    private void InitRoundStats() {
-        score = 0;
-        enlargeRemaining = 500;
-        shrinkRemaining = 500;
-        tempEnlargeShrinkValue = 0;
     }
 
     // Get Weight

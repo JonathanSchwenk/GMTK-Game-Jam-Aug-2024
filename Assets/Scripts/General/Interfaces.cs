@@ -4,7 +4,8 @@ using UnityEngine;
 using System;
 
 public interface IGameManager {
-    GameState State {get; set;}
+    GameState gameState {get; set;}
+    Action<GameState> OnGameStateChanged {get; set;}
     void UpdateGameState(GameState state);
 }
 

@@ -13,7 +13,7 @@ public class GamePieceObject : MonoBehaviour {
     public string category;
     public string gamePieceName;
 
-    private List<GameObject> collidingPieces = new List<GameObject>();
+    public List<GameObject> collidingPieces = new List<GameObject>();
     private Color originalColor;
     private bool justSpawned = true;
 
@@ -29,8 +29,10 @@ public class GamePieceObject : MonoBehaviour {
     void Update() {
         if (!isPlaced) {
             if (collidingPieces.Count != 0) {
+                canPlace = false;
                 gameObject.transform.GetComponent<Renderer>().material.color = new Color(1, 0, 99/255, 1);
             } else {
+                canPlace = true;
                 gameObject.transform.GetComponent<Renderer>().material.color = originalColor;
             }
         }
@@ -72,7 +74,6 @@ public class GamePieceObject : MonoBehaviour {
             collidingPieces.Add(other.gameObject);
         }
         if (other.gameObject.tag == "Border") {
-            canPlace = false;
             collidingPieces.Add(other.gameObject);
         }
     }
@@ -92,7 +93,6 @@ public class GamePieceObject : MonoBehaviour {
                 gameObject.transform.localScale = new Vector3(1, 1, 1);
                 justSpawned = false;
             }
-            canPlace = true;
             collidingPieces.Remove(other.gameObject);
         }
     }

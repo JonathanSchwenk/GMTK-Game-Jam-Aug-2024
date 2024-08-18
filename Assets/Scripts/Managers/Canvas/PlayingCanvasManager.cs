@@ -5,6 +5,7 @@ using Dorkbots.ServiceLocatorTools;
 using TMPro;
 
 public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
+    [SerializeField] private TextMeshProUGUI scoreValue;
     [SerializeField] private TextMeshProUGUI enlargeRemainingValue;
     [SerializeField] private TextMeshProUGUI shrinkRemainingValue;
     [SerializeField] private TextMeshProUGUI categoryText;
@@ -17,14 +18,17 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     public float countdownTimer {get; set;}
 
     private IGamePieceManager gamePieceManager;
+    private IGameManager gameManager;
 
     // Start is called before the first frame update
     void Start() {
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
+        gameManager = ServiceLocator.Resolve<IGameManager>();
     }
 
     // Update is called once per frame
     void Update() {
+        scoreValue.text = gamePieceManager.score.ToString();
         enlargeRemainingValue.text = gamePieceManager.enlargeRemaining.ToString();
         shrinkRemainingValue.text = gamePieceManager.shrinkRemaining.ToString();
         if (gamePieceManager.activeGamePiece != null) {
@@ -54,6 +58,10 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         perspectiveCamera.SetActive(!perspectiveCamera.activeSelf);
     }
 
+    public void GiveUpButton() {
+        gameManager.UpdateGameState(GameState.GameOver);
+    }
+
     // Add this function to your existing PlayingCanvasManager script
     public void StartCountdown(float duration) {
         StartCoroutine(CountdownCoroutine(duration));
@@ -79,11 +87,9 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
 
         // Ensure remainingTime does not go negative
         countdownTimer = 0;
-        Debug.Log("Time remaining: 0.0 seconds");
-
-        // Print out when the time has run out
-        Debug.Log("Time's up! You lost!");
-        // TODO: End the game
+        
+        // Game over
+        gameManager.UpdateGameState(GameState.GameOver);
     }
 
 }
