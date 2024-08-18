@@ -66,9 +66,14 @@ public class Spawner : MonoBehaviour
         GameObject objectToSpawn = objectsInCategory[randomObjectInt];
         GameObject instatiatedObject = Instantiate(objectToSpawn, transform.position, Quaternion.identity);
 
+        string[] splitName = objectToSpawn.name.Split(' ');
+        string category = splitName[0];
+        string name = string.Join(" ", splitName[1..]);
+
         // Init the object with proper components and values
         instatiatedObject.AddComponent<GamePieceObject>();
-        instatiatedObject.GetComponent<GamePieceObject>().category = objectToSpawn.tag;
+        instatiatedObject.GetComponent<GamePieceObject>().category = category;
+        instatiatedObject.GetComponent<GamePieceObject>().gamePieceName = name;
         instatiatedObject.GetComponent<GamePieceObject>().weight = 1;
         instatiatedObject.GetComponent<GamePieceObject>().isPlaced = false;
 

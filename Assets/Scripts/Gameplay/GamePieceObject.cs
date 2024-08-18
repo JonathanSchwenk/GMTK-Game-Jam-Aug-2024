@@ -11,9 +11,11 @@ public class GamePieceObject : MonoBehaviour {
     public bool isPlaced = false;
     public bool canPlace = true;
     public string category;
+    public string gamePieceName;
 
     private List<GameObject> collidingPieces = new List<GameObject>();
     private Color originalColor;
+    private bool justSpawned = true;
 
     private IGamePieceManager gamePieceManager;
 
@@ -59,27 +61,11 @@ public class GamePieceObject : MonoBehaviour {
         // Get the mouse position in screen space
         Vector3 mousePosition = Input.mousePosition;
 
-        // Set the z-coordinate of the mouse position to a fixed distance from the camera
-        // This distance is how far away you want the object to be from the camera in world space
         mousePosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
 
         // Convert screen space to world space
         return Camera.main.ScreenToWorldPoint(mousePosition);
     }
-
-    // Change color if the object is colliding with another object
-    // private void OnCollisionEnter(Collision other) {
-    //     if (other.gameObject.tag == "GamePiece") {
-    //         collidingPieces.Add(other.gameObject);
-    //     }
-    // }
-
-    // Change color back to original if the object is no longer colliding with another object
-    // private void OnCollisionExit(Collision other) {
-    //     if (other.gameObject.tag == "GamePiece") {
-    //         collidingPieces.Remove(other.gameObject);
-    //     }
-    // }
 
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.tag == "GamePiece") {
@@ -87,6 +73,7 @@ public class GamePieceObject : MonoBehaviour {
         }
         if (other.gameObject.tag == "Border") {
             canPlace = false;
+            collidingPieces.Add(other.gameObject);
         }
     }
 
@@ -101,8 +88,12 @@ public class GamePieceObject : MonoBehaviour {
             collidingPieces.Remove(other.gameObject);
         }
         if (other.gameObject.tag == "Border") {
+            if (justSpawned) {
+                gameObject.transform.localScale = new Vector3(1, 1, 1);
+                justSpawned = false;
+            }
             canPlace = true;
-            gameObject.transform.localScale = new Vector3(1, 1, 1);
+            collidingPieces.Remove(other.gameObject);
         }
     }
 }
