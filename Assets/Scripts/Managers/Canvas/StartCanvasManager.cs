@@ -11,10 +11,15 @@ public class StartCanvasManager : MonoBehaviour
     // [SerializeField] private TextMeshProUGUI bestChainValue;
 
     [SerializeField] private TutorialCanvasManager tutorialCanvasManager;
+    [SerializeField] private GameObject sfxOn;
+    [SerializeField] private GameObject sfxOff;
+    [SerializeField] private GameObject musicOn;
+    [SerializeField] private GameObject musicOff;
 
     private IGameManager gameManager;
     private IGamePieceManager gamePieceManager;
     private IAudioManager audioManager;
+    private ISaveManager saveManager;
 
     // Start is called before the first frame update
     void Start()
@@ -22,10 +27,10 @@ public class StartCanvasManager : MonoBehaviour
         gameManager = ServiceLocator.Resolve<IGameManager>();
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
+        saveManager = ServiceLocator.Resolve<ISaveManager>();
 
-        if (audioManager != null && gameManager.gameState != GameState.Playing) {
-            audioManager.StopMusic("GameplayMusic");
-            audioManager.PlayMusic("MenuMusic");
+        if (audioManager != null) {
+            InitSoundAndMusic();
         }
     }
 
@@ -55,5 +60,72 @@ public class StartCanvasManager : MonoBehaviour
     public void OnExitButtonPressed() {
         audioManager.PlaySFX("UIClick_General");
         Application.Quit();
+    }
+
+    public void ToggleSFX() {
+        audioManager.PlaySFX("UIClick_General");
+
+        if (saveManager.saveData.SFXOn) {
+            saveManager.saveData.SFXOn = false;
+
+            sfxOn.SetActive(false);
+            sfxOff.SetActive(true);
+        } else {
+            saveManager.saveData.SFXOn = true;
+
+            sfxOn.SetActive(true);
+            sfxOff.SetActive(false);
+        }
+
+        saveManager.Save();
+    }
+
+    public void ToggleMusic() {
+        audioManager.PlaySFX("UIClick_General");
+
+        // If already on, stop music, else, play music
+        if (saveManager.saveData.musicOn) {
+            saveManager.saveData.musicOn = false;
+
+            audioManager.StopMusic("MenuMusic");
+            audioManager.StopMusic("GameplayMusic");
+
+            musicOn.SetActive(false);
+            musicOff.SetActive(true);
+        } else {
+            saveManager.saveData.musicOn = true;
+
+            audioManager.PlayMusic("MenuMusic");
+
+            musicOn.SetActive(true);
+            musicOff.SetActive(false);
+        }
+
+        saveManager.Save();
+    }
+
+    private void InitSoundAndMusic() {
+        // music
+        if (saveManager.saveData.musicOn) {
+            audioManager.PlayMusic("MenuMusic");
+
+            musicOn.SetActive(true);
+            musicOff.SetActive(false);
+        } else {
+            audioManager.StopMusic("MenuMusic");
+            audioManager.StopMusic("GameplayMusic");
+
+            musicOn.SetActive(false);
+            musicOff.SetActive(true);
+        }
+
+        // sfx
+        if (saveManager.saveData.SFXOn) {
+            sfxOn.SetActive(true);
+            sfxOff.SetActive(false);
+        } else {
+            sfxOn.SetActive(false);
+            sfxOff.SetActive(true);
+        }
     }
 }
