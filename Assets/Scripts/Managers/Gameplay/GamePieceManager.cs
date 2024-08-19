@@ -15,6 +15,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public float curShrinkValue { get; set; }
     public float pointsEarned { get; set; }
     public float curMaxChain { get; set; }
+    public float tempEnlargeShrinkValue { get; set; }
+
     private float weightMultiplier = 0.25f; // Multiplier to adjust weight scaling
     private float calculatedWeightMultiplier = 2.5f; // Multiplier to adjust weight scaling
     // private float weightCap_Max = 7500f; // Maximum weight value
@@ -26,7 +28,6 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     private Vector3 testOrigin;  // Origin of the sphere cast
 
     private float changeSizeValue = 0.25f; // Value to change the size of the game piece by
-    private float tempEnlargeShrinkValue;
 
     private List<GamePieceObject> curConnectedObjects = new List<GamePieceObject>();
     private List<GameObject> totGamePiecesOnBoard = new List<GameObject>();
@@ -45,8 +46,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         // Largest chain
 
         // Reset enlarge and shrink values
-        enlargeRemaining = 150;
-        shrinkRemaining = 100;
+        enlargeRemaining = 50;
+        shrinkRemaining = 50;
         tempEnlargeShrinkValue = 0;
         pointsEarned = 0;
         curMaxChain = 0;

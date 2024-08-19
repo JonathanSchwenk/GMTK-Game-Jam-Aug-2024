@@ -19,6 +19,8 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private GameObject placeButtonOn;
     [SerializeField] private GameObject placeButtonOff;
 
+    [SerializeField] private GameObject spawner;
+
     public float countdownTimer { get; set; }
 
     private IGamePieceManager gamePieceManager;
@@ -107,6 +109,19 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
 
             gameManager.UpdateGameState(GameState.GameOver);
         }
+    }
+
+    public void ResetButton() {
+        // Scale values
+        gamePieceManager.enlargeRemaining = gamePieceManager.curEnlargeValue;
+        gamePieceManager.shrinkRemaining = gamePieceManager.curShrinkValue;
+        gamePieceManager.tempEnlargeShrinkValue = 0;
+
+        // move and scale back
+        Vector3 size = gamePieceManager.activeGamePiece.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+        float scaleMultiplier = 30f / ((size.x + size.z) / 2);
+        gamePieceManager.activeGamePiece.transform.localScale = new Vector3(scaleMultiplier, scaleMultiplier, scaleMultiplier);
+        gamePieceManager.activeGamePiece.transform.position = spawner.transform.position;
     }
 
     // Add this function to your existing PlayingCanvasManager script
