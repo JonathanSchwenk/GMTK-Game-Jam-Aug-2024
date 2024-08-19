@@ -45,6 +45,7 @@ public interface IGamePieceManager {
     float curEnlargeValue {get; set;}
     float curShrinkValue {get; set;}
 
+    void InitRoundStats();
     void Place();
     void Enlarge();
     void Shrink();

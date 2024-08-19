@@ -11,11 +11,13 @@ public class StartCanvasManager : MonoBehaviour
     // [SerializeField] private TextMeshProUGUI bestChainValue;
 
     private IGameManager gameManager;
+    private IGamePieceManager gamePieceManager;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = ServiceLocator.Resolve<IGameManager>();
+        gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
     }
 
     // Update is called once per frame
@@ -26,6 +28,7 @@ public class StartCanvasManager : MonoBehaviour
 
     public void OnStartButtonPressed() {
         Debug.Log("Start button pressed");
+        gamePieceManager.InitRoundStats();
         gameManager.UpdateGameState(GameState.Playing);
     }
 
@@ -36,9 +39,5 @@ public class StartCanvasManager : MonoBehaviour
     public void OnExitButtonPressed() {
         Debug.Log("Exit button pressed");
         Application.Quit();
-    }
-
-    public void OnSettingsButtonPressed() {
-        Debug.Log("Settings button pressed");
     }
 }

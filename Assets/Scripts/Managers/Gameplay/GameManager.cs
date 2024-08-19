@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour, IGameManager
                 break;
             case GameState.GameOver:
                 playingCanvasManager.StopCountdown();
+                // Would save the score here
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);

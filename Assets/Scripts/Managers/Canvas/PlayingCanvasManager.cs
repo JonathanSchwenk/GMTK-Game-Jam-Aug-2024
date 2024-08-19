@@ -11,6 +11,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private TextMeshProUGUI categoryText;
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI pauseText;
 
     [SerializeField] private GameObject orthographicCamera;
     [SerializeField] private GameObject perspectiveCamera;
@@ -56,6 +57,16 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     public void ToggleCamera() {
         orthographicCamera.SetActive(!orthographicCamera.activeSelf);
         perspectiveCamera.SetActive(!perspectiveCamera.activeSelf);
+    }
+
+    public void PauseButton() {
+        if (Time.timeScale == 0) {
+            pauseText.text = "Pause";
+            Time.timeScale = 1;
+        } else {
+            pauseText.text = "Play";
+            Time.timeScale = 0;
+        }
     }
 
     public void GiveUpButton() {

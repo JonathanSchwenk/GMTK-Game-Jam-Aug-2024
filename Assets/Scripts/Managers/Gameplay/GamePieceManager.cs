@@ -36,11 +36,12 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         InitRoundStats();
     }
 
-    private void InitRoundStats() {
+    public void InitRoundStats() {
         score = 0;
         enlargeRemaining = 500;
         shrinkRemaining = 500;
         tempEnlargeShrinkValue = 0;
+        activeGamePiece = null;
     }
 
     // Update is called once per frame

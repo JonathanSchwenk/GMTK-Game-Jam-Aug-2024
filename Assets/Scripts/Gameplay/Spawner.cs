@@ -12,6 +12,7 @@ public class Spawner : MonoBehaviour
     private IPlayingCanvasManager playingCanvasManager;
 
     private float targetWidth = 20f;
+    private float timerCountdown = 15f;
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +35,7 @@ public class Spawner : MonoBehaviour
         gamePieceManager.curShrinkValue = gamePieceManager.shrinkRemaining;
 
         // Starts the countdown for the game piece
-        playingCanvasManager.StartCountdown(10);
+        playingCanvasManager.StartCountdown(timerCountdown);
 
         int randomCategoryInt = Random.Range(0, 8);
         // SpawnObject(spawnManager.objectsDatabase.egyptObjects);
