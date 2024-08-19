@@ -12,7 +12,7 @@ public class Spawner : MonoBehaviour
     private IPlayingCanvasManager playingCanvasManager;
     private IGameManager gameManager;
 
-    private float targetWidth = 20f;
+    private float targetWidthHeight = 30f;
     private float timerCountdown = 15f;
 
     // Start is called before the first frame update
@@ -43,41 +43,41 @@ public class Spawner : MonoBehaviour
         
 
         int randomCategoryInt = Random.Range(0, 8);
-        SpawnObject(spawnManager.objectsDatabase.egyptObjects);
+        // SpawnObject(spawnManager.objectsDatabase.pirateObjects);
         
-        // switch(randomCategoryInt) {
-        //     case 0:
-        //         SpawnObject(spawnManager.objectsDatabase.cityObjects);
-        //         break;
-        //     case 1:
-        //         SpawnObject(spawnManager.objectsDatabase.egyptObjects);
-        //         break;
-        //     case 2:
-        //         SpawnObject(spawnManager.objectsDatabase.japanObjects);
-        //         break;
-        //     case 3:
-        //         SpawnObject(spawnManager.objectsDatabase.medievalObjects);
-        //         break;
-        //     case 4:
-        //         SpawnObject(spawnManager.objectsDatabase.neighborhoodObjects);
-        //         break;
-        //     case 5:
-        //         SpawnObject(spawnManager.objectsDatabase.pirateObjects);
-        //         break;
-        //     case 6:
-        //         SpawnObject(spawnManager.objectsDatabase.scifiObjects);
-        //         break;
-        //     case 7:
-        //         SpawnObject(spawnManager.objectsDatabase.westernObjects);
-        //         break;
-        //     default:
-        //         break;
-        // }
+        switch(randomCategoryInt) {
+            case 0:
+                SpawnObject(spawnManager.objectsDatabase.cityObjects);
+                break;
+            case 1:
+                SpawnObject(spawnManager.objectsDatabase.egyptObjects);
+                break;
+            case 2:
+                SpawnObject(spawnManager.objectsDatabase.japanObjects);
+                break;
+            case 3:
+                SpawnObject(spawnManager.objectsDatabase.medievalObjects);
+                break;
+            case 4:
+                SpawnObject(spawnManager.objectsDatabase.neighborhoodObjects);
+                break;
+            case 5:
+                SpawnObject(spawnManager.objectsDatabase.pirateObjects);
+                break;
+            case 6:
+                SpawnObject(spawnManager.objectsDatabase.scifiObjects);
+                break;
+            case 7:
+                SpawnObject(spawnManager.objectsDatabase.westernObjects);
+                break;
+            default:
+                break;
+        }
     }
 
     private void SpawnObject(GameObject[] objectsInCategory) {
-        // int randomObjectInt = Random.Range(0, objectsInCategory.Length);
-        int randomObjectInt = 3;
+        int randomObjectInt = Random.Range(0, objectsInCategory.Length);
+        // int randomObjectInt = 3;
         GameObject objectToSpawn = objectsInCategory[randomObjectInt];
         GameObject instatiatedObject = Instantiate(objectToSpawn, transform.position, Quaternion.identity);
 
@@ -103,7 +103,7 @@ public class Spawner : MonoBehaviour
 
         // Sets the scale so all objects are around same size, do this based off the weight of the object
         Vector3 size = instatiatedObject.GetComponent<MeshFilter>().sharedMesh.bounds.size;
-        float scaleMultiplier = targetWidth / size.x;
+        float scaleMultiplier = targetWidthHeight / ((size.x + size.z) / 2);
 
         instatiatedObject.transform.localScale = new Vector3(scaleMultiplier, scaleMultiplier, scaleMultiplier);
 

@@ -16,6 +16,9 @@ public class GamePieceObject : MonoBehaviour {
     public List<GameObject> collidingPieces = new List<GameObject>();
     private Color originalColor;
     private bool justSpawned = true;
+    private float targetWidthHeight = 60f;
+    private float largePieceSize = 0.9f;
+
 
     private IGamePieceManager gamePieceManager;
 
@@ -90,7 +93,16 @@ public class GamePieceObject : MonoBehaviour {
         }
         if (other.gameObject.tag == "Border") {
             if (justSpawned) {
-                gameObject.transform.localScale = new Vector3(1, 1, 1);
+                Vector3 size = gameObject.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+                float averageSize = (size.x + size.z) / 2;
+                float scaleMultiplier = Mathf.Pow(targetWidthHeight / averageSize, 0.5f);
+                print(scaleMultiplier);
+
+                if (scaleMultiplier < 1) {
+                    scaleMultiplier = largePieceSize;
+                }
+
+                gameObject.transform.localScale = new Vector3(scaleMultiplier, scaleMultiplier, scaleMultiplier);
                 justSpawned = false;
             }
             collidingPieces.Remove(other.gameObject);
