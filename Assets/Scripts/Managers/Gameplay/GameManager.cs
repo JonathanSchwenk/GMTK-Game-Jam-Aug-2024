@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour, IGameManager
     private ISaveManager saveManager;
     private IAudioManager audioManager;
     private IPlayingCanvasManager playingCanvasManager;
-
+    private IGamePieceManager gamePieceManager;
 
 
 
@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour, IGameManager
         saveManager = ServiceLocator.Resolve<ISaveManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
         playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
+        gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
 
         UpdateGameState(GameState.StartMenu);
     }
@@ -57,7 +58,18 @@ public class GameManager : MonoBehaviour, IGameManager
                 break;
             case GameState.GameOver:
                 playingCanvasManager.StopCountdown();
-                // Would save the score here
+                // Score
+                if (gamePieceManager.score > saveManager.saveData.highScore) {
+                    saveManager.saveData.highScore = gamePieceManager.score;
+                }
+
+                // Chain
+                if (gamePieceManager.curMaxChain > saveManager.saveData.highChain) {
+                    saveManager.saveData.highChain = gamePieceManager.curMaxChain;
+                }
+
+                saveManager.Save();
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);

@@ -12,11 +12,14 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI pauseText;
+    [SerializeField] private TextMeshProUGUI pointsEarnedText;
 
     [SerializeField] private GameObject orthographicCamera;
     [SerializeField] private GameObject perspectiveCamera;
+    [SerializeField] private GameObject placeButtonOn;
+    [SerializeField] private GameObject placeButtonOff;
 
-    public float countdownTimer {get; set;}
+    public float countdownTimer { get; set; }
 
     private IGamePieceManager gamePieceManager;
     private IGameManager gameManager;
@@ -31,7 +34,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
 
     // Update is called once per frame
     void Update() {
-        scoreValue.text = gamePieceManager.score.ToString();
+        scoreValue.text = Mathf.RoundToInt(gamePieceManager.score).ToString();
         enlargeRemainingValue.text = gamePieceManager.enlargeRemaining.ToString();
         shrinkRemainingValue.text = gamePieceManager.shrinkRemaining.ToString();
         if (gamePieceManager.activeGamePiece != null) {
@@ -42,6 +45,17 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
             nameText.text = "Name";
         }
         timerText.text = countdownTimer.ToString("F1");
+        pointsEarnedText.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
+
+        if (gamePieceManager.activeGamePiece != null) {
+            if (gamePieceManager.activeGamePiece.canPlace) {
+                placeButtonOn.SetActive(true);
+                placeButtonOff.SetActive(false);
+            } else {
+                placeButtonOn.SetActive(false);
+                placeButtonOff.SetActive(true);
+            }
+        }
     }
 
     public void OnPlaceObjectPressed() {
@@ -72,23 +86,27 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     }
 
     public void PauseButton() {
-        audioManager.PlaySFX("UIClick_General");
-        if (Time.timeScale == 0) {
-            pauseText.text = "Pause";
-            Time.timeScale = 1;
-        } else {
-            pauseText.text = "Play";
-            Time.timeScale = 0;
+        if (gameManager.gameState != GameState.Tutorial) {
+            audioManager.PlaySFX("UIClick_General");
+            if (Time.timeScale == 0) {
+                pauseText.text = "Pause";
+                Time.timeScale = 1;
+            } else {
+                pauseText.text = "Play";
+                Time.timeScale = 0;
+            }
         }
     }
 
     public void GiveUpButton() {
-        audioManager.PlaySFX("UIClick_General");
-        audioManager.PlaySFX("GameOver");
-        audioManager.PlayMusic("MenuMusic");
-        audioManager.StopMusic("GameplayMusic");
+        if (gameManager.gameState != GameState.Tutorial) {
+            audioManager.PlaySFX("UIClick_General");
+            audioManager.PlaySFX("GameOver");
+            audioManager.PlayMusic("MenuMusic");
+            audioManager.StopMusic("GameplayMusic");
 
-        gameManager.UpdateGameState(GameState.GameOver);
+            gameManager.UpdateGameState(GameState.GameOver);
+        }
     }
 
     // Add this function to your existing PlayingCanvasManager script
@@ -116,7 +134,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
 
         // Ensure remainingTime does not go negative
         countdownTimer = 0;
-        
+
         // Game over
         audioManager.PlaySFX("GameOver");
         audioManager.PlayMusic("MenuMusic");

@@ -44,6 +44,8 @@ public interface IGamePieceManager {
     float shrinkRemaining {get; set;}
     float curEnlargeValue {get; set;}
     float curShrinkValue {get; set;}
+    float pointsEarned { get; set; }
+    float curMaxChain { get; set; }
 
     void InitRoundStats();
     void Place();

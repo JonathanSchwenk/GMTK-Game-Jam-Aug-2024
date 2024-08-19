@@ -13,17 +13,19 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public float shrinkRemaining { get; set; }
     public float curEnlargeValue { get; set; }
     public float curShrinkValue { get; set; }
+    public float pointsEarned { get; set; }
+    public float curMaxChain { get; set; }
 
     private float baseWeight = 1f; // Base weight value
     private float weightMultiplier = 0.05f; // Multiplier to adjust weight scaling
     private float calculatedWeightMultiplier = 1f; // Multiplier to adjust weight scaling
     private float weightCap_Max = 7500f; // Maximum weight value
-    private float weightCap_Min = 10f; // Minimum weight value
+    private float weightCap_Min = 100f; // Minimum weight value
 
     private float detectionRadius = 25f;  // Radius of the sphere cast
     private Vector3 testOrigin;  // Origin of the sphere cast
 
-    private float changeSizeValue = 0.1f; // Value to change the size of the game piece by
+    private float changeSizeValue = 0.25f; // Value to change the size of the game piece by
     private float tempEnlargeShrinkValue;
 
     private List<GamePieceObject> curConnectedObjects = new List<GamePieceObject>();
@@ -43,9 +45,11 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         // Largest chain
 
         // Reset enlarge and shrink values
-        enlargeRemaining = 500;
-        shrinkRemaining = 500;
+        enlargeRemaining = 100;
+        shrinkRemaining = 100;
         tempEnlargeShrinkValue = 0;
+        pointsEarned = 0;
+        curMaxChain = 0;
 
         // Reset the connected objects
         curConnectedObjects.Clear();
@@ -124,6 +128,10 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         float subtractedWeight = (curConnectedObjects.Count - 1) * tempSubtraction * calculatedWeightMultiplier;
 
         // Add new
+        pointsEarned = addedWeight - subtractedWeight;
+        if (pointsEarned > curMaxChain) {
+            curMaxChain = pointsEarned;
+        }
         score += addedWeight - subtractedWeight;
 
         // Reset curConnectedObjects

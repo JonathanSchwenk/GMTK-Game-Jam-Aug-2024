@@ -7,8 +7,8 @@ using TMPro;
 public class StartCanvasManager : MonoBehaviour
 {
 
-    // [SerializeField] private TextMeshProUGUI bestScoreValue;
-    // [SerializeField] private TextMeshProUGUI bestChainValue;
+    [SerializeField] private TextMeshProUGUI bestScoreValue;
+    [SerializeField] private TextMeshProUGUI bestChainValue;
 
     [SerializeField] private TutorialCanvasManager tutorialCanvasManager;
     [SerializeField] private GameObject sfxOn;
@@ -37,7 +37,8 @@ public class StartCanvasManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        bestScoreValue.text = saveManager.saveData.highScore.ToString();
+        bestChainValue.text = saveManager.saveData.highChain.ToString();
     }
 
     public void OnStartButtonPressed() {

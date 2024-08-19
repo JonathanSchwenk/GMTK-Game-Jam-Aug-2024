@@ -7,11 +7,15 @@ using TMPro;
 public class GameOverCanvasManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI yourScoreValue;
+    [SerializeField] private TextMeshProUGUI bestScoreValue;
+    [SerializeField] private TextMeshProUGUI roundsMaxChainValue;
+    [SerializeField] private TextMeshProUGUI bestMaxChainValue;
 
 
     private IGamePieceManager gamePieceManager;
     private IGameManager gameManager;
     private IAudioManager audioManager;
+    private ISaveManager saveManager;
 
     // Start is called before the first frame update
     void Start()
@@ -19,12 +23,16 @@ public class GameOverCanvasManager : MonoBehaviour
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         gameManager = ServiceLocator.Resolve<IGameManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
+        saveManager = ServiceLocator.Resolve<ISaveManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
         yourScoreValue.text = gamePieceManager.score.ToString();
+        bestScoreValue.text = saveManager.saveData.highScore.ToString();
+        roundsMaxChainValue.text = gamePieceManager.curMaxChain.ToString();
+        bestMaxChainValue.text = saveManager.saveData.highChain.ToString();
     }
 
     public void OnReplayPressed() {

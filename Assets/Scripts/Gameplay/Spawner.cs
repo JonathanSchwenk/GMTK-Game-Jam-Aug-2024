@@ -43,7 +43,7 @@ public class Spawner : MonoBehaviour
         
 
         int randomCategoryInt = Random.Range(0, 8);
-        // SpawnObject(spawnManager.objectsDatabase.pirateObjects);
+        // SpawnObject(spawnManager.objectsDatabase.scifiObjects);
         
         switch(randomCategoryInt) {
             case 0:
