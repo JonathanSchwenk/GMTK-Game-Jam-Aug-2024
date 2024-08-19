@@ -53,6 +53,8 @@ public class StartCanvasManager : MonoBehaviour
 
     public void OnTutorialButtonPressed() {
         audioManager.PlaySFX("UIClick_General");
+
+        gamePieceManager.InitRoundStats();
         tutorialCanvasManager.currentPage = 0;
         gameManager.UpdateGameState(GameState.Tutorial);
     }

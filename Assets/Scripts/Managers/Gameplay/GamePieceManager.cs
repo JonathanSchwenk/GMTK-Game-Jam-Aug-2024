@@ -27,6 +27,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     private float tempEnlargeShrinkValue;
 
     private List<GamePieceObject> curConnectedObjects = new List<GamePieceObject>();
+    private List<GameObject> totGamePiecesOnBoard = new List<GameObject>();
 
     private IPlayingCanvasManager playingCanvasManager;
 
@@ -37,11 +38,29 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     }
 
     public void InitRoundStats() {
+        // Reset score
         score = 0;
+        // Largest chain
+
+        // Reset enlarge and shrink values
         enlargeRemaining = 500;
         shrinkRemaining = 500;
         tempEnlargeShrinkValue = 0;
+
+        // Reset the connected objects
+        curConnectedObjects.Clear();
+
+        // Reset the active game piece
+        if (activeGamePiece != null) {
+            Destroy(activeGamePiece.gameObject);
+        }
         activeGamePiece = null;
+
+        // Reset the total game pieces on board
+        foreach (GameObject gamePiece in totGamePiecesOnBoard) {
+            Destroy(gamePiece);
+        }
+        totGamePiecesOnBoard.Clear();
     }
 
     // Update is called once per frame
@@ -54,6 +73,9 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         if (activeGamePiece != null && activeGamePiece.canPlace) {
             // Stop the timers coroutine
             playingCanvasManager.StopCountdown();
+
+            // Add to total game pieces on board
+            totGamePiecesOnBoard.Add(activeGamePiece.gameObject);
 
             // Get the weight of the active game piece
             AssignWeight();
@@ -156,7 +178,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             if (enlargeRemaining - 1 >= 0 && GetWeight(activeGamePiece.gameObject) < weightCap_Max) {
                 // Enlarge the active game piece
                 activeGamePiece.transform.localScale += new Vector3(changeSizeValue, changeSizeValue, changeSizeValue);
-                
+
                 tempEnlargeShrinkValue += 1;
 
                 if (tempEnlargeShrinkValue > 0) {
