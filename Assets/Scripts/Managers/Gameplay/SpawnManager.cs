@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 
-public class SpawnManager : MonoBehaviour, ISpawnManager
-{
+public class SpawnManager : MonoBehaviour, ISpawnManager {
 
-    public ObjectsDatabase objectsDatabase {get; set;}
+    public ObjectsDatabase objectsDatabase { get; set; }
 
     [SerializeField] private ObjectsDatabase objectsDatabaseLocal;
     [SerializeField] private Spawner spawner;
@@ -18,8 +17,7 @@ public class SpawnManager : MonoBehaviour, ISpawnManager
     // But for now start right away
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         objectsDatabase = objectsDatabaseLocal;
 
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
@@ -27,10 +25,11 @@ public class SpawnManager : MonoBehaviour, ISpawnManager
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (gamePieceManager.activeGamePiece == null && gameManager.gameState == GameState.Playing) {
-            spawner.Spawn();
+    void Update() {
+        if (gamePieceManager.activeGamePiece == null) {
+            if (gameManager.gameState == GameState.Playing || gameManager.gameState == GameState.Tutorial) {
+                spawner.Spawn();
+            }
         }
     }
 }

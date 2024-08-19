@@ -10,6 +10,8 @@ public class StartCanvasManager : MonoBehaviour
     // [SerializeField] private TextMeshProUGUI bestScoreValue;
     // [SerializeField] private TextMeshProUGUI bestChainValue;
 
+    [SerializeField] private TutorialCanvasManager tutorialCanvasManager;
+
     private IGameManager gameManager;
     private IGamePieceManager gamePieceManager;
 
@@ -34,6 +36,8 @@ public class StartCanvasManager : MonoBehaviour
 
     public void OnTutorialButtonPressed() {
         Debug.Log("Tutorial button pressed");
+        tutorialCanvasManager.currentPage = 0;
+        gameManager.UpdateGameState(GameState.Tutorial);
     }
 
     public void OnExitButtonPressed() {

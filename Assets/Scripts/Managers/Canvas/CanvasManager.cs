@@ -36,6 +36,7 @@ public class CanvasManager : MonoBehaviour {
             case GameState.Tutorial:
                 DeactivateAllCanvases();
                 tutorialCanvas.SetActive(true);
+                playingCanvas.SetActive(true);
                 break;
             case GameState.Playing:
                 DeactivateAllCanvases();
