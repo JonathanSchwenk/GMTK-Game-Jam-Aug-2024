@@ -20,11 +20,13 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
 
     private IGamePieceManager gamePieceManager;
     private IGameManager gameManager;
+    private IAudioManager audioManager;
 
     // Start is called before the first frame update
     void Start() {
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         gameManager = ServiceLocator.Resolve<IGameManager>();
+        audioManager = ServiceLocator.Resolve<IAudioManager>();
     }
 
     // Update is called once per frame
@@ -43,23 +45,34 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     }
 
     public void OnPlaceObjectPressed() {
-        gamePieceManager.Place();
+        if (gamePieceManager.activeGamePiece.canPlace) {
+            gamePieceManager.Place();
+            audioManager.PlaySFX("UIClick_General");
+            audioManager.PlaySFX("PlaceGamePiece");
+        } else {
+            audioManager.PlaySFX("UIClick_Error");
+        }
     }
 
     public void OnEnlargeObjectPressed() {
         gamePieceManager.Enlarge();
+        audioManager.PlaySFX("UIClick_Scale");
     }
 
     public void OnShrinkObjectPressed() {
         gamePieceManager.Shrink();
+        audioManager.PlaySFX("UIClick_Scale");
     }
 
     public void ToggleCamera() {
         orthographicCamera.SetActive(!orthographicCamera.activeSelf);
         perspectiveCamera.SetActive(!perspectiveCamera.activeSelf);
+
+        audioManager.PlaySFX("UIClick_General");
     }
 
     public void PauseButton() {
+        audioManager.PlaySFX("UIClick_General");
         if (Time.timeScale == 0) {
             pauseText.text = "Pause";
             Time.timeScale = 1;
@@ -70,6 +83,11 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     }
 
     public void GiveUpButton() {
+        audioManager.PlaySFX("UIClick_General");
+        audioManager.PlaySFX("GameOver");
+        audioManager.PlayMusic("MenuMusic");
+        audioManager.StopMusic("GameplayMusic");
+
         gameManager.UpdateGameState(GameState.GameOver);
     }
 
@@ -100,6 +118,9 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         countdownTimer = 0;
         
         // Game over
+        audioManager.PlaySFX("GameOver");
+        audioManager.PlayMusic("MenuMusic");
+        audioManager.StopMusic("GameplayMusic");
         gameManager.UpdateGameState(GameState.GameOver);
     }
 

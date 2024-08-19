@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour, IGameManager
     public void UpdateGameState(GameState newState) {
         gameState = newState;
 
-        // Swtich statement that deals with each possible state 
+        // Switch statement that deals with each possible state 
         switch(newState) {
             case GameState.StartMenu:
                 

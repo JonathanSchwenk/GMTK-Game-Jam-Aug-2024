@@ -15226,7 +15226,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0892b451886b1436bbb60e91c0d0c6fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sounds: []
+  sounds:
+  - name: UIClick_General
+    clip: {fileID: 8300000, guid: f0b720ab595bf6e4dbccd582a24b863d, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: UIClick_Scale
+    clip: {fileID: 8300000, guid: daaf3da4a2943f242a9cf9d3d1b2efe7, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: PlaceGamePiece
+    clip: {fileID: 8300000, guid: 9a20e972d8df83e4b9a7c1d348b4049b, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: UIClick_ScrollPage
+    clip: {fileID: 8300000, guid: 849edfc7c95af5747a38822b60668138, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: a3523a406235a7149bf7d17d22b72f53, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: StartGame
+    clip: {fileID: 8300000, guid: 6686cb7b4439b154d884c1590cd7ef2d, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: MenuMusic
+    clip: {fileID: 8300000, guid: adeffcf5fd543bb4a991e8d0c56fea73, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: GameplayMusic
+    clip: {fileID: 8300000, guid: 828e4ba1421185f48bb759392999d41d, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
+  - name: UIClick_Error
+    clip: {fileID: 8300000, guid: 5b9b724c46f583344b5eadd57b62bee2, type: 3}
+    volume: 1
+    pitch: 1
+    spacialBlend: 0
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}
 --- !u!4 &677057749
 Transform:
   m_ObjectHideFlags: 0
@@ -31858,7 +31930,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1366402634}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 179248373}
+        m_TargetAssemblyTypeName: StartCanvasManager, Assembly-CSharp
+        m_MethodName: OnExitButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1366402634
 MonoBehaviour:
   m_ObjectHideFlags: 0

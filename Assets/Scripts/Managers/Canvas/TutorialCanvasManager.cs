@@ -12,10 +12,12 @@ public class TutorialCanvasManager : MonoBehaviour {
     public int currentPage = 0; // Set this to 0 to start at the first page when the tutorial is opened
 
     private IGameManager gameManager;
+    private IAudioManager audioManager;
 
     // Start is called before the first frame update
     void Start() {
         gameManager = ServiceLocator.Resolve<IGameManager>();
+        audioManager = ServiceLocator.Resolve<IAudioManager>();
     }
 
     // Update is called once per frame
@@ -40,6 +42,7 @@ public class TutorialCanvasManager : MonoBehaviour {
 
     public void NextPage() {
         if (currentPage < tutorialPages.Count - 1) {
+            audioManager.PlaySFX("UIClick_ScrollPage");
             tutorialPages[currentPage].SetActive(false);
             currentPage++;
             tutorialPages[currentPage].SetActive(true);
@@ -48,6 +51,7 @@ public class TutorialCanvasManager : MonoBehaviour {
 
     public void PreviousPage() {
         if (currentPage > 0) {
+            audioManager.PlaySFX("UIClick_ScrollPage");
             tutorialPages[currentPage].SetActive(false);
             currentPage--;
             tutorialPages[currentPage].SetActive(true);
@@ -55,6 +59,7 @@ public class TutorialCanvasManager : MonoBehaviour {
     }
 
     public void CloseTutorial() {
+        audioManager.PlaySFX("UIClick_General");
         tutorialPages[currentPage].SetActive(false);
         currentPage = 0;
         gameManager.UpdateGameState(GameState.StartMenu);

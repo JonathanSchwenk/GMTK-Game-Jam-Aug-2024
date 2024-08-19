@@ -14,12 +14,19 @@ public class StartCanvasManager : MonoBehaviour
 
     private IGameManager gameManager;
     private IGamePieceManager gamePieceManager;
+    private IAudioManager audioManager;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = ServiceLocator.Resolve<IGameManager>();
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
+        audioManager = ServiceLocator.Resolve<IAudioManager>();
+
+        if (audioManager != null && gameManager.gameState != GameState.Playing) {
+            audioManager.StopMusic("GameplayMusic");
+            audioManager.PlayMusic("MenuMusic");
+        }
     }
 
     // Update is called once per frame
@@ -29,19 +36,24 @@ public class StartCanvasManager : MonoBehaviour
     }
 
     public void OnStartButtonPressed() {
-        Debug.Log("Start button pressed");
+        // Sound and music
+        audioManager.PlaySFX("UIClick_General");
+        audioManager.PlaySFX("StartGame");
+        audioManager.StopMusic("MenuMusic");
+        audioManager.PlayMusic("GameplayMusic");
+
         gamePieceManager.InitRoundStats();
         gameManager.UpdateGameState(GameState.Playing);
     }
 
     public void OnTutorialButtonPressed() {
-        Debug.Log("Tutorial button pressed");
+        audioManager.PlaySFX("UIClick_General");
         tutorialCanvasManager.currentPage = 0;
         gameManager.UpdateGameState(GameState.Tutorial);
     }
 
     public void OnExitButtonPressed() {
-        Debug.Log("Exit button pressed");
+        audioManager.PlaySFX("UIClick_General");
         Application.Quit();
     }
 }
