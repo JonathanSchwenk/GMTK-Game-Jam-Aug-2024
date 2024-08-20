@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 using TMPro;
+using System;
 
 public class StartCanvasManager : MonoBehaviour
 {
@@ -37,8 +38,8 @@ public class StartCanvasManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bestScoreValue.text = saveManager.saveData.highScore.ToString();
-        bestChainValue.text = saveManager.saveData.highChain.ToString();
+        bestScoreValue.text = Mathf.RoundToInt(saveManager.saveData.highScore).ToString();
+        bestChainValue.text = Mathf.RoundToInt(saveManager.saveData.highChain).ToString();
     }
 
     public void OnStartButtonPressed() {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 using TMPro;
+using System;
 
 public class GameOverCanvasManager : MonoBehaviour
 {
@@ -29,10 +30,10 @@ public class GameOverCanvasManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        yourScoreValue.text = gamePieceManager.score.ToString();
-        bestScoreValue.text = saveManager.saveData.highScore.ToString();
-        roundsMaxChainValue.text = gamePieceManager.curMaxChain.ToString();
-        bestMaxChainValue.text = saveManager.saveData.highChain.ToString();
+        yourScoreValue.text = Mathf.RoundToInt(gamePieceManager.score).ToString();
+        bestScoreValue.text = Mathf.RoundToInt(saveManager.saveData.highScore).ToString();
+        roundsMaxChainValue.text = Mathf.RoundToInt(gamePieceManager.curMaxChain).ToString();
+        bestMaxChainValue.text = Mathf.RoundToInt(saveManager.saveData.highChain).ToString();
     }
 
     public void OnReplayPressed() {

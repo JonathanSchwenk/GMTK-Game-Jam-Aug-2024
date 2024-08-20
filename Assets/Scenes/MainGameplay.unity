@@ -5416,7 +5416,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &225293745
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15389,7 +15389,7 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     spacialBlend: 0
-    loop: 0
+    loop: 1
     playOnAwake: 0
     source: {fileID: 0}
   - name: GameplayMusic
@@ -15397,7 +15397,7 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     spacialBlend: 0
-    loop: 0
+    loop: 1
     playOnAwake: 0
     source: {fileID: 0}
   - name: UIClick_Error
@@ -22846,7 +22846,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 325}
+  m_AnchoredPosition: {x: 0, y: 340}
   m_SizeDelta: {x: 400, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &941351497
@@ -50342,12 +50342,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'In this game you are trying to build a city and get as many points as
-    you can. You earn points by placing game pieces on the board. Earn more points
-    for larger pieces and chaining pieces together. A chain is created when multiple
-    game pieces of the same category are placed close to each other. Strategically
-    enlarge and shrink game pieces to make the biggest city you can while earning
-    as many points as possible. '
+  m_text: 'The objective of this game is to build a city and accumulate as many points
+    as you can. You earn points by placing game pieces on the board. The larger the
+    piece, the more points you earn. You can also earn points by building chains.
+    A chain is created when multiple game pieces of the same category are placed
+    close to each other. And like pieces, the larger the chain, the more points you
+    earn. Strategically enlarge and shrink game pieces to make the biggest city you
+    can while earning as many points as possible. '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5094b715585444e90b7306721788dae5, type: 2}
   m_sharedMaterial: {fileID: 2393364598115949451, guid: 5094b715585444e90b7306721788dae5, type: 2}
@@ -51607,9 +51608,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Once you place a game piece your score will go up. You earn more points
+  m_text: Once you place a game piece your score will go up. You earn more points
     for larger pieces and for chaining pieces together. A chain is created when multiple
-    game pieces of the same category are placed close to each other. '
+    game pieces of the same category are placed close to each other. Chains can be
+    in the form of any shape. They can be a line, square, circle, doesn't matter,
+    as long as the pieces are all connected in some way.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5094b715585444e90b7306721788dae5, type: 2}
   m_sharedMaterial: {fileID: 2393364598115949451, guid: 5094b715585444e90b7306721788dae5, type: 2}
@@ -51727,7 +51730,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 150}
+  m_SizeDelta: {x: 600, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6043162945644326274
 MonoBehaviour:
@@ -52344,8 +52347,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: Increase and decrease the size of the active game piece. Larger pieces
-    earn more points. But be careful, there's a llimit to how many times you can
-    do this.
+    earn more points. But be careful, there's a limit to how many times you can do
+    this.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5094b715585444e90b7306721788dae5, type: 2}
   m_sharedMaterial: {fileID: 2393364598115949451, guid: 5094b715585444e90b7306721788dae5, type: 2}
@@ -52984,8 +52987,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -176, y: -158}
-  m_SizeDelta: {x: 600, y: 500}
+  m_AnchoredPosition: {x: -83, y: -151}
+  m_SizeDelta: {x: 800, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8799556810233507564
 MonoBehaviour:

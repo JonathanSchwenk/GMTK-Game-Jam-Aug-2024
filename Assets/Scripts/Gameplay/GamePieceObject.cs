@@ -48,7 +48,7 @@ public class GamePieceObject : MonoBehaviour {
 
     // Move
     private void OnMouseDrag() {
-        if (!isPlaced) {
+        if (!isPlaced && Time.timeScale != 0) {
             Vector3 pos = GetMouseWorldPosition();
             transform.position = new Vector3(pos.x, 0, pos.z);
         }

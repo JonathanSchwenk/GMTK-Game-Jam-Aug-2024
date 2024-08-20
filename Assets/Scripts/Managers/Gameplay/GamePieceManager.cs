@@ -33,10 +33,12 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     private List<GameObject> totGamePiecesOnBoard = new List<GameObject>();
 
     private IPlayingCanvasManager playingCanvasManager;
+    private IAudioManager audioManager;
 
     // Start is called before the first frame update
     void Start() {
         playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
+        audioManager = ServiceLocator.Resolve<IAudioManager>();
         InitRoundStats();
     }
 
@@ -185,6 +187,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public void Enlarge() {
         if (activeGamePiece != null) {
             if (enlargeRemaining - 1 >= 0 && GetWeight(activeGamePiece.gameObject) < weightCap_Max) {
+                audioManager.PlaySFX("UIClick_Scale");
                 // Enlarge the active game piece
                 activeGamePiece.transform.localScale += new Vector3(changeSizeValue, changeSizeValue, changeSizeValue);
 
@@ -196,6 +199,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
                     // if (curShrinkValue - Math.Abs(tempEnlargeShrinkValue))
                     shrinkRemaining = curShrinkValue - Math.Abs(tempEnlargeShrinkValue);
                 }
+            } else {
+                audioManager.PlaySFX("UIClick_Error");
             }
         }
     }
@@ -204,6 +209,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public void Shrink() {
         if (activeGamePiece != null) {
             if (shrinkRemaining - 1 >= 0 && GetWeight(activeGamePiece.gameObject) > weightCap_Min) {
+                audioManager.PlaySFX("UIClick_Scale");
                 // Shrink the active game piece
                 activeGamePiece.transform.localScale -= new Vector3(changeSizeValue, changeSizeValue, changeSizeValue);
 
@@ -214,6 +220,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
                 } else {
                     enlargeRemaining = curEnlargeValue - Math.Abs(tempEnlargeShrinkValue);
                 }
+            } else {
+                audioManager.PlaySFX("UIClick_Error");
             }
         }
     }

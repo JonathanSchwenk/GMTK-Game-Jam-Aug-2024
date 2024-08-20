@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7470164346934294200}
   - component: {fileID: 7599935095254995673}
   m_Layer: 0
-  m_Name: Meieval Big Tower
+  m_Name: Medieval Big Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

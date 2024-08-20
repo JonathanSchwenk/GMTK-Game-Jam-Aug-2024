@@ -61,23 +61,27 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     }
 
     public void OnPlaceObjectPressed() {
-        if (gamePieceManager.activeGamePiece.canPlace) {
-            gamePieceManager.Place();
-            audioManager.PlaySFX("UIClick_General");
-            audioManager.PlaySFX("PlaceGamePiece");
-        } else {
-            audioManager.PlaySFX("UIClick_Error");
+        if (Time.timeScale != 0) {
+            if (gamePieceManager.activeGamePiece.canPlace) {
+                gamePieceManager.Place();
+                audioManager.PlaySFX("UIClick_General");
+                audioManager.PlaySFX("PlaceGamePiece");
+            } else {
+                audioManager.PlaySFX("UIClick_Error");
+            }
         }
     }
 
     public void OnEnlargeObjectPressed() {
-        gamePieceManager.Enlarge();
-        audioManager.PlaySFX("UIClick_Scale");
+        if (Time.timeScale != 0) {
+            gamePieceManager.Enlarge();
+        }
     }
 
     public void OnShrinkObjectPressed() {
-        gamePieceManager.Shrink();
-        audioManager.PlaySFX("UIClick_Scale");
+        if (Time.timeScale != 0) {
+            gamePieceManager.Shrink();
+        }
     }
 
     public void ToggleCamera() {
