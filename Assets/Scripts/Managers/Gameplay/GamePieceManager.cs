@@ -112,6 +112,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         }
     }
 
+    # region Particle Effects
+
     private void HandlePlaceParticleEffect() {
         placeParticleEffect.SetActive(true);
 
@@ -143,6 +145,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         StartCoroutine(DisableObjectAfterTime(placeParticleEffect, placeParticleEffectDuration));
     }
 
+    // TODO: Move this to a utility class
     private IEnumerator DisableObjectAfterTime(GameObject obj, float delay) {
         // Wait for the specified delay
         yield return new WaitForSeconds(delay);
@@ -150,6 +153,10 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         // Disable the GameObject
         obj.SetActive(false);
     }
+
+    # endregion
+
+    # region points / score
 
     private IEnumerator WaitToAddPoints(float delay) {
         // Wait for the specified delay
@@ -220,6 +227,10 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         startAddingPoints = false;
     }
 
+    # endregion
+
+    # region Detect Nearby Objects
+
     void DetectNearbyObjects(GamePieceObject gamePiece) {
         Mesh mesh = gamePiece.gameObject.GetComponent<MeshFilter>().sharedMesh;
         Vector3 size = mesh.bounds.size;
@@ -261,6 +272,10 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         // Draw the sphere at the start point
         Gizmos.DrawWireSphere(testOrigin, detectionRadius);
     }
+
+    # endregion
+
+    # region Enlarge/Shrink
 
     // Enlarge
     public void Enlarge() {
@@ -305,6 +320,10 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         }
     }
 
+    # endregion
+
+    # region Weight
+
     // Get Weight
     public float GetWeight(GameObject localGameObject) {
         Mesh mesh = localGameObject.GetComponent<MeshFilter>().sharedMesh;
@@ -335,4 +354,6 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     private void AssignWeight() {
         activeGamePiece.weight = GetWeight(activeGamePiece.gameObject);
     }
+
+    # endregion
 }
