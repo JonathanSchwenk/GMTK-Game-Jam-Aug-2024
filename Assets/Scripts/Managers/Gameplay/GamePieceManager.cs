@@ -1,11 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AssetKits.ParticleImage;
 using Dorkbots.ServiceLocatorTools;
 using UnityEngine;
 
 public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // public List<GameObject> gamePieces = new List<GameObject>(); // Not sure if I even need this
+
+    [SerializeField] private GameObject placeParticleEffect;
+    [SerializeField] private Canvas playingCanvas;
 
     public GamePieceObject activeGamePiece { get; set; }
     public float score { get; set; }
@@ -31,6 +35,9 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     private List<GamePieceObject> curConnectedObjects = new List<GamePieceObject>();
     private List<GameObject> totGamePiecesOnBoard = new List<GameObject>();
+
+    private bool startAddingPoints = false;
+    private float placeParticleEffectDuration = 2.0f;
 
     private IPlayingCanvasManager playingCanvasManager;
     private IAudioManager audioManager;
@@ -81,6 +88,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             // Stop the timers coroutine
             playingCanvasManager.StopCountdown();
 
+            HandlePlaceParticleEffect();
+
             // Add to total game pieces on board
             totGamePiecesOnBoard.Add(activeGamePiece.gameObject);
 
@@ -101,6 +110,52 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
             activeGamePiece = null;
         }
+    }
+
+    private void HandlePlaceParticleEffect() {
+        placeParticleEffect.SetActive(true);
+
+        // Get particle image
+        ParticleImage particleImage = placeParticleEffect.GetComponent<ParticleImage>();
+        Mesh mesh = activeGamePiece.GetComponent<MeshFilter>().sharedMesh;
+        Vector3 size = mesh.bounds.size;
+        Vector3 scaledSize = Vector3.Scale(size, activeGamePiece.transform.localScale);
+        float area = scaledSize.x * scaledSize.z;
+        particleImage.circleRadius = area / 10;
+        particleImage.rateOverTime = GetWeight(activeGamePiece.gameObject) / 3;
+
+        // Convert 3D object position to screen space
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(activeGamePiece.transform.position);
+
+        // Convert screen position to Canvas space
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            playingCanvas.transform as RectTransform,
+            screenPos,
+            null, // Pass null because Canvas is in Screen Space - Overlay mode
+            out Vector2 canvasPos
+        );
+
+        // Position the particle system at the object's position
+        placeParticleEffect.transform.localPosition = canvasPos;
+
+        StartCoroutine(WaitToAddPoints(placeParticleEffectDuration / 2));
+
+        StartCoroutine(DisableObjectAfterTime(placeParticleEffect, placeParticleEffectDuration));
+    }
+
+    private IEnumerator DisableObjectAfterTime(GameObject obj, float delay) {
+        // Wait for the specified delay
+        yield return new WaitForSeconds(delay);
+
+        // Disable the GameObject
+        obj.SetActive(false);
+    }
+
+    private IEnumerator WaitToAddPoints(float delay) {
+        // Wait for the specified delay
+        yield return new WaitForSeconds(delay);
+
+        startAddingPoints = true;
     }
 
     // Calculate score
@@ -135,10 +190,34 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         if (pointsEarned > curMaxChain) {
             curMaxChain = pointsEarned;
         }
-        score += addedWeight - subtractedWeight;
+        // score += pointsEarned;
+    
+        StartCoroutine(AddPointsOverTime(pointsEarned, placeParticleEffectDuration / 2));
 
         // Reset curConnectedObjects
         curConnectedObjects.Clear();
+    }
+
+    private IEnumerator AddPointsOverTime(float pointsEarned, float duration)
+    {
+        float startPoints = score;
+        float targetPoints = score + pointsEarned;
+        float elapsedTime = 0f;
+
+        while (startAddingPoints != true) {
+            yield return null;
+        }
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            score = Mathf.Lerp(startPoints, targetPoints, elapsedTime / duration);
+            yield return null; // Wait for the next frame
+        }
+
+        // Ensure the final value is set exactly to the target
+        score = targetPoints;
+        startAddingPoints = false;
     }
 
     void DetectNearbyObjects(GamePieceObject gamePiece) {
