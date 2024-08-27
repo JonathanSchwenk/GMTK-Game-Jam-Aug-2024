@@ -21,10 +21,12 @@ public class GamePieceObject : MonoBehaviour {
 
 
     private IGamePieceManager gamePieceManager;
+    private IPlayingCanvasManager playingCanvasManager;
 
     // Start is called before the first frame update
     void Start() {
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
+        playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
         originalColor = gameObject.transform.GetComponent<Renderer>().material.color;
     }
 
@@ -41,10 +43,12 @@ public class GamePieceObject : MonoBehaviour {
         }
     }
 
-    // For testing purposes
-    // private void OnMouseDown() {
-    //     gamePieceManager.activeGamePiece = this;
-    // }
+    private void OnMouseDown() {
+        // gamePieceManager.activeGamePiece = this; // For testing
+        if (isPlaced) {
+            playingCanvasManager.ShowTappedPieceDescription(this.gameObject, category, gamePieceName);
+        }
+    }
 
     // Move
     private void OnMouseDrag() {

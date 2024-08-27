@@ -63,4 +63,5 @@ public interface IPlayingCanvasManager {
     void StartCountdown(float duration);
     void StopCountdown();
     float countdownTimer {get; set;}
+    void ShowTappedPieceDescription(GameObject obj, string category, string name);
 }

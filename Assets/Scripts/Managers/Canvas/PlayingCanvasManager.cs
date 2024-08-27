@@ -5,7 +5,8 @@ using Dorkbots.ServiceLocatorTools;
 using TMPro;
 
 public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
-    [SerializeField] private TextMeshProUGUI scoreValue;
+    [SerializeField, Header("UI Elements"), Space(10)]
+    private TextMeshProUGUI scoreValue;
     [SerializeField] private TextMeshProUGUI enlargeRemainingValue;
     [SerializeField] private TextMeshProUGUI shrinkRemainingValue;
     [SerializeField] private TextMeshProUGUI categoryText;
@@ -14,12 +15,18 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private TextMeshProUGUI pauseText;
     [SerializeField] private TextMeshProUGUI pointsEarnedText;
 
-    [SerializeField] private GameObject orthographicCamera;
+    [SerializeField, Header("Cameras"), Space(10)]
+    private GameObject orthographicCamera;
     [SerializeField] private GameObject perspectiveCamera;
-    [SerializeField] private GameObject placeButtonOn;
+
+    [SerializeField, Header("Buttons"), Space(10)]
+    private GameObject placeButtonOn;
     [SerializeField] private GameObject placeButtonOff;
 
-    [SerializeField] private GameObject spawner;
+    [SerializeField, Header("Other GameObjects"), Space(10)]
+    private GameObject spawner;
+    [SerializeField] private Canvas playingCanvas;
+    [SerializeField] private TappedGamePieceDesc[] tappedPieceDescList;
 
     public float countdownTimer { get; set; }
 
@@ -159,6 +166,25 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         audioManager.PlayMusic("MenuMusic");
         audioManager.StopMusic("GameplayMusic");
         gameManager.UpdateGameState(GameState.GameOver);
+    }
+
+    public void ShowTappedPieceDescription(GameObject obj, string category, string name) {
+        for (int i = 0; i < tappedPieceDescList.Length; i++) {
+            if (tappedPieceDescList[i].tappedPiece.activeSelf == false) {
+                tappedPieceDescList[i].tappedPiece.SetActive(true);
+                tappedPieceDescList[i].tappedPiece.transform.localPosition = Utilities.GetCanvasPosition(
+                    obj.transform.position,
+                    Camera.main,
+                    playingCanvas
+                );
+                tappedPieceDescList[i].categoryText.text = category;
+                tappedPieceDescList[i].nameText.text = name;
+
+                StartCoroutine(Utilities.DisableObjectAfterTime(tappedPieceDescList[i].tappedPiece, 2.5f));
+                
+                break;
+            }
+        }
     }
 
 }

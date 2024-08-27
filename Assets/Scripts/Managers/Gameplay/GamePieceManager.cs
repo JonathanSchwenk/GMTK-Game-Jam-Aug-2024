@@ -8,7 +8,7 @@ using UnityEngine;
 public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // public List<GameObject> gamePieces = new List<GameObject>(); // Not sure if I even need this
 
-    [SerializeField] private GameObject placeParticleEffect;
+    [SerializeField] private GameObject[] placeParticleEffectList;
     [SerializeField] private Canvas playingCanvas;
 
     public GamePieceObject activeGamePiece { get; set; }
@@ -115,43 +115,29 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     # region Particle Effects
 
     private void HandlePlaceParticleEffect() {
-        placeParticleEffect.SetActive(true);
+        for (int i = 0; i < placeParticleEffectList.Length; i++) {
+            if (placeParticleEffectList[i].activeSelf == false) {
+                placeParticleEffectList[i].SetActive(true);
 
-        // Get particle image
-        ParticleImage particleImage = placeParticleEffect.GetComponent<ParticleImage>();
-        Mesh mesh = activeGamePiece.GetComponent<MeshFilter>().sharedMesh;
-        Vector3 size = mesh.bounds.size;
-        Vector3 scaledSize = Vector3.Scale(size, activeGamePiece.transform.localScale);
-        float area = scaledSize.x * scaledSize.z;
-        particleImage.circleRadius = area / 10;
-        particleImage.rateOverTime = GetWeight(activeGamePiece.gameObject) / 3;
+                // Get particle image
+                ParticleImage particleImage = placeParticleEffectList[i].GetComponent<ParticleImage>();
+                Mesh mesh = activeGamePiece.GetComponent<MeshFilter>().sharedMesh;
+                Vector3 size = mesh.bounds.size;
+                Vector3 scaledSize = Vector3.Scale(size, activeGamePiece.transform.localScale);
+                float area = scaledSize.x * scaledSize.z;
+                particleImage.circleRadius = area / 10;
+                particleImage.rateOverTime = GetWeight(activeGamePiece.gameObject) / 3;
 
-        // Convert 3D object position to screen space
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(activeGamePiece.transform.position);
+                // Position the particle system at the object's position
+                placeParticleEffectList[i].transform.localPosition = Utilities.GetCanvasPosition(activeGamePiece.transform.position, Camera.main, playingCanvas);
 
-        // Convert screen position to Canvas space
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            playingCanvas.transform as RectTransform,
-            screenPos,
-            null, // Pass null because Canvas is in Screen Space - Overlay mode
-            out Vector2 canvasPos
-        );
+                StartCoroutine(WaitToAddPoints(placeParticleEffectDuration / 2));
 
-        // Position the particle system at the object's position
-        placeParticleEffect.transform.localPosition = canvasPos;
+                StartCoroutine(Utilities.DisableObjectAfterTime(placeParticleEffectList[i], placeParticleEffectDuration));
 
-        StartCoroutine(WaitToAddPoints(placeParticleEffectDuration / 2));
-
-        StartCoroutine(DisableObjectAfterTime(placeParticleEffect, placeParticleEffectDuration));
-    }
-
-    // TODO: Move this to a utility class
-    private IEnumerator DisableObjectAfterTime(GameObject obj, float delay) {
-        // Wait for the specified delay
-        yield return new WaitForSeconds(delay);
-
-        // Disable the GameObject
-        obj.SetActive(false);
+                break;
+            }
+        }
     }
 
     # endregion
@@ -198,15 +184,14 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             curMaxChain = pointsEarned;
         }
         // score += pointsEarned;
-    
+
         StartCoroutine(AddPointsOverTime(pointsEarned, placeParticleEffectDuration / 2));
 
         // Reset curConnectedObjects
         curConnectedObjects.Clear();
     }
 
-    private IEnumerator AddPointsOverTime(float pointsEarned, float duration)
-    {
+    private IEnumerator AddPointsOverTime(float pointsEarned, float duration) {
         float startPoints = score;
         float targetPoints = score + pointsEarned;
         float elapsedTime = 0f;
@@ -215,8 +200,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             yield return null;
         }
 
-        while (elapsedTime < duration)
-        {
+        while (elapsedTime < duration) {
             elapsedTime += Time.deltaTime;
             score = Mathf.Lerp(startPoints, targetPoints, elapsedTime / duration);
             yield return null; // Wait for the next frame
