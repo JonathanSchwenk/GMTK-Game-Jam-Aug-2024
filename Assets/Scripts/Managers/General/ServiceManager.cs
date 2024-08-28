@@ -12,6 +12,7 @@ public class ServiceManager : MonoBehaviour
     public GamePieceManager gamePieceManager;
     public SpawnManager spawnManager;
     public PlayingCanvasManager playingCanvasManager;
+    public InventoryManager inventoryManager;
 
     
 
@@ -50,6 +51,9 @@ public class ServiceManager : MonoBehaviour
         if (!ServiceLocator.IsRegistered<IPlayingCanvasManager>()) {
             ServiceLocator.Register<IPlayingCanvasManager>(playingCanvasManager);
         }
+        if (!ServiceLocator.IsRegistered<IInventoryManager>()) {
+            ServiceLocator.Register<IInventoryManager>(inventoryManager);
+        }
 
     }
 
@@ -76,6 +80,9 @@ public class ServiceManager : MonoBehaviour
         }
         if (ServiceLocator.IsRegistered<IPlayingCanvasManager>()) {
             ServiceLocator.Unregister<IPlayingCanvasManager>();
+        }
+        if (ServiceLocator.IsRegistered<IInventoryManager>()) {
+            ServiceLocator.Unregister<IInventoryManager>();
         }
     }
     

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour, IGameManager
     private IAudioManager audioManager;
     private IPlayingCanvasManager playingCanvasManager;
     private IGamePieceManager gamePieceManager;
+    private IInventoryManager inventoryManager;
 
 
 
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour, IGameManager
         audioManager = ServiceLocator.Resolve<IAudioManager>();
         playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
+        inventoryManager = ServiceLocator.Resolve<IInventoryManager>();
 
         UpdateGameState(GameState.StartMenu);
     }
@@ -67,6 +69,11 @@ public class GameManager : MonoBehaviour, IGameManager
                 if (gamePieceManager.curMaxChain > saveManager.saveData.highChain) {
                     saveManager.saveData.highChain = gamePieceManager.curMaxChain;
                 }
+
+                // Gems
+                saveManager.saveData.gems = inventoryManager.gems;
+
+                // Inventory
 
                 saveManager.Save();
 

@@ -14,7 +14,6 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     public GamePieceObject activeGamePiece { get; set; }
     public float score { get; set; }
-    public int gems { get; set; }
     public float enlargeRemaining { get; set; }
     public float shrinkRemaining { get; set; }
     public float curEnlargeValue { get; set; }
@@ -41,11 +40,13 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     private IPlayingCanvasManager playingCanvasManager;
     private IAudioManager audioManager;
+    private IInventoryManager inventoryManager;
 
     // Start is called before the first frame update
     void Start() {
         playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
+        inventoryManager = ServiceLocator.Resolve<IInventoryManager>();
         InitRoundStats();
     }
 
@@ -122,7 +123,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public void AddGems() {
         int randomInt = UnityEngine.Random.Range(0, 100);
 
-        if (randomInt < 10) {
+        if (randomInt < 100) {
             int randomGems = UnityEngine.Random.Range(1, 5);
             HandleGemsParticleEffect(randomGems);
             StartCoroutine(WaitToAddGems(randomGems, placeParticleEffectDuration / 2));
@@ -137,18 +138,18 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     }
 
     private IEnumerator AddGemsOverTime(int gemsEarned, float duration) {
-        float startGems = gems;
-        float targetGems = gems + gemsEarned;
+        float startGems = inventoryManager.gems;
+        int targetGems = inventoryManager.gems + gemsEarned;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration) {
             elapsedTime += Time.deltaTime;
-            gems = (int)Mathf.Lerp(startGems, targetGems, elapsedTime / duration);
+            inventoryManager.gems = (int)Mathf.Lerp(startGems, targetGems, elapsedTime / duration);
             yield return null; // Wait for the next frame
         }
 
         // Ensure the final value is set exactly to the target
-        score = targetGems;
+        inventoryManager.gems = (int)targetGems;
     }
 
     # endregion

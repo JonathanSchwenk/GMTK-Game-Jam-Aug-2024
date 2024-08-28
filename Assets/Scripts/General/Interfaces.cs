@@ -40,7 +40,6 @@ public interface IAdManager {
 public interface IGamePieceManager {
     GamePieceObject activeGamePiece {get; set;}
     float score {get; set;}
-    int gems { get; set; }
     float enlargeRemaining {get; set;}
     float shrinkRemaining {get; set;}
     float curEnlargeValue {get; set;}
@@ -65,4 +64,8 @@ public interface IPlayingCanvasManager {
     void StopCountdown();
     float countdownTimer {get; set;}
     void ShowTappedPieceDescription(GameObject obj, string category, string name);
+}
+
+public interface IInventoryManager {
+    int gems {get; set;}
 }
