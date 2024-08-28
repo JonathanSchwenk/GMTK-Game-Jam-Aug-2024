@@ -9,10 +9,12 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     // public List<GameObject> gamePieces = new List<GameObject>(); // Not sure if I even need this
 
     [SerializeField] private GameObject[] placeParticleEffectList;
+    [SerializeField] private GameObject[] gemParticleEffectList;
     [SerializeField] private Canvas playingCanvas;
 
     public GamePieceObject activeGamePiece { get; set; }
     public float score { get; set; }
+    public int gems { get; set; }
     public float enlargeRemaining { get; set; }
     public float shrinkRemaining { get; set; }
     public float curEnlargeValue { get; set; }
@@ -23,8 +25,6 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     private float weightMultiplier = 0.25f; // Multiplier to adjust weight scaling
     private float calculatedWeightMultiplier = 2.5f; // Multiplier to adjust weight scaling
-    // private float weightCap_Max = 7500f; // Maximum weight value
-    // private float weightCap_Min = 100f; // Minimum weight value
     private float weightCap_Max = 750f; // Maximum weight value
     private float weightCap_Min = 50f; // Minimum weight value
 
@@ -82,6 +82,8 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     }
 
+    # region Place
+
     // Place
     public void Place() {
         if (activeGamePiece != null && activeGamePiece.canPlace) {
@@ -89,6 +91,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             playingCanvasManager.StopCountdown();
 
             HandlePlaceParticleEffect();
+            AddGems();
 
             // Add to total game pieces on board
             totGamePiecesOnBoard.Add(activeGamePiece.gameObject);
@@ -112,6 +115,44 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         }
     }
 
+    # endregion
+
+    # region gems
+
+    public void AddGems() {
+        int randomInt = UnityEngine.Random.Range(0, 100);
+
+        if (randomInt < 10) {
+            int randomGems = UnityEngine.Random.Range(1, 5);
+            HandleGemsParticleEffect(randomGems);
+            StartCoroutine(WaitToAddGems(randomGems, placeParticleEffectDuration / 2));
+        }
+    }
+
+    private IEnumerator WaitToAddGems(int gemsEarned, float delay) {
+        // Wait for the specified delay
+        yield return new WaitForSeconds(delay);
+
+        StartCoroutine(AddGemsOverTime(gemsEarned, placeParticleEffectDuration / 2));
+    }
+
+    private IEnumerator AddGemsOverTime(int gemsEarned, float duration) {
+        float startGems = gems;
+        float targetGems = gems + gemsEarned;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration) {
+            elapsedTime += Time.deltaTime;
+            gems = (int)Mathf.Lerp(startGems, targetGems, elapsedTime / duration);
+            yield return null; // Wait for the next frame
+        }
+
+        // Ensure the final value is set exactly to the target
+        score = targetGems;
+    }
+
+    # endregion
+
     # region Particle Effects
 
     private void HandlePlaceParticleEffect() {
@@ -134,6 +175,30 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
                 StartCoroutine(WaitToAddPoints(placeParticleEffectDuration / 2));
 
                 StartCoroutine(Utilities.DisableObjectAfterTime(placeParticleEffectList[i], placeParticleEffectDuration));
+
+                break;
+            }
+        }
+    }
+
+    private void HandleGemsParticleEffect(int gemCount) {
+        for (int i = 0; i < gemParticleEffectList.Length; i++) {
+            if (gemParticleEffectList[i].activeSelf == false) {
+                gemParticleEffectList[i].SetActive(true);
+
+                // Get particle image
+                ParticleImage particleImage = gemParticleEffectList[i].GetComponent<ParticleImage>();
+                Mesh mesh = activeGamePiece.GetComponent<MeshFilter>().sharedMesh;
+                Vector3 size = mesh.bounds.size;
+                Vector3 scaledSize = Vector3.Scale(size, activeGamePiece.transform.localScale);
+                float area = scaledSize.x * scaledSize.z;
+                particleImage.circleRadius = area / 10;
+                particleImage.rateOverTime = gemCount;
+
+                // Position the particle system at the object's position
+                gemParticleEffectList[i].transform.localPosition = Utilities.GetCanvasPosition(activeGamePiece.transform.position, Camera.main, playingCanvas);
+
+                StartCoroutine(Utilities.DisableObjectAfterTime(gemParticleEffectList[i], placeParticleEffectDuration));
 
                 break;
             }

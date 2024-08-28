@@ -8,6 +8,7 @@ public class SaveData
 {
     public float highScore = 0;
     public float highChain = 0;
+    public int gems = 0;
     public bool SFXOn = true;
     public bool musicOn = true;
 }

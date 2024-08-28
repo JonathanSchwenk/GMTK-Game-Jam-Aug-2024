@@ -14,6 +14,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI pauseText;
     [SerializeField] private TextMeshProUGUI pointsEarnedText;
+    [SerializeField] private TextMeshProUGUI gemsText;
 
     [SerializeField, Header("Cameras"), Space(10)]
     private GameObject orthographicCamera;
@@ -44,6 +45,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     // Update is called once per frame
     void Update() {
         scoreValue.text = Mathf.RoundToInt(gamePieceManager.score).ToString();
+        gemsText.text = gamePieceManager.gems.ToString();
         enlargeRemainingValue.text = gamePieceManager.enlargeRemaining.ToString();
         shrinkRemainingValue.text = gamePieceManager.shrinkRemaining.ToString();
         if (gamePieceManager.activeGamePiece != null) {
