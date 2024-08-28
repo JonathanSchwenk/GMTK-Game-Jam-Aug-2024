@@ -4,21 +4,21 @@ using UnityEngine;
 using System;
 
 public interface IGameManager {
-    GameState gameState {get; set;}
-    Action<GameState> OnGameStateChanged {get; set;}
+    GameState gameState { get; set; }
+    Action<GameState> OnGameStateChanged { get; set; }
     void UpdateGameState(GameState state);
 }
 
 public interface IObjectPooler {
-    List<Pool> Pools {get; set;}
-    Dictionary<string, Queue<GameObject>> poolDictionary {get; set;}
+    List<Pool> Pools { get; set; }
+    Dictionary<string, Queue<GameObject>> poolDictionary { get; set; }
 
     GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation);
 }
 
 public interface ISaveManager {
-    SaveData saveData {get; set;}
-    Action<int>OnSave {get; set;}
+    SaveData saveData { get; set; }
+    Action<int> OnSave { get; set; }
 
     void Save();
     void Load();
@@ -38,12 +38,12 @@ public interface IAdManager {
 }
 
 public interface IGamePieceManager {
-    GamePieceObject activeGamePiece {get; set;}
-    float score {get; set;}
-    float enlargeRemaining {get; set;}
-    float shrinkRemaining {get; set;}
-    float curEnlargeValue {get; set;}
-    float curShrinkValue {get; set;}
+    GamePieceObject activeGamePiece { get; set; }
+    float score { get; set; }
+    float enlargeRemaining { get; set; }
+    float shrinkRemaining { get; set; }
+    float curEnlargeValue { get; set; }
+    float curShrinkValue { get; set; }
     float pointsEarned { get; set; }
     float curMaxChain { get; set; }
     float tempEnlargeShrinkValue { get; set; }
@@ -56,16 +56,30 @@ public interface IGamePieceManager {
 }
 
 public interface ISpawnManager {
-    ObjectsDatabase objectsDatabase {get; set;}
+    ObjectsDatabase objectsDatabase { get; set; }
 }
 
 public interface IPlayingCanvasManager {
     void StartCountdown(float duration);
     void StopCountdown();
-    float countdownTimer {get; set;}
+    float countdownTimer { get; set; }
     void ShowTappedPieceDescription(GameObject obj, string category, string name);
 }
 
 public interface IInventoryManager {
-    int gems {get; set;}
+    int gems { get; set; }
+}
+
+public interface IShopCanvasManager {
+
+}
+
+public interface IMissionCanvasManager {
+
+}
+
+public interface IMenuCanvasManager {
+    MenuCanvasState menuCanvasState { get; set; }
+    Action<MenuCanvasState> OnMenuCanvasStateChanged { get; set; }
+    void UpdateCanvasState(MenuCanvasState newState);
 }

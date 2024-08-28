@@ -21,6 +21,7 @@ public class StartCanvasManager : MonoBehaviour
     private IGamePieceManager gamePieceManager;
     private IAudioManager audioManager;
     private ISaveManager saveManager;
+    private IMenuCanvasManager menuCanvasManager;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,7 @@ public class StartCanvasManager : MonoBehaviour
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
         saveManager = ServiceLocator.Resolve<ISaveManager>();
+        menuCanvasManager = ServiceLocator.Resolve<IMenuCanvasManager>();
 
         if (audioManager != null) {
             InitSoundAndMusic();
@@ -131,5 +133,17 @@ public class StartCanvasManager : MonoBehaviour
             sfxOn.SetActive(false);
             sfxOff.SetActive(true);
         }
+    }
+
+    public void OnShopButtonPressed() {
+        audioManager.PlaySFX("UIClick_General");
+
+        menuCanvasManager.UpdateCanvasState(MenuCanvasState.Shop);
+    }
+
+    public void OnMissionsButtonPressed() {
+        audioManager.PlaySFX("UIClick_General");
+
+        menuCanvasManager.UpdateCanvasState(MenuCanvasState.Missions);
     }
 }
