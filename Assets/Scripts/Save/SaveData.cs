@@ -11,5 +11,10 @@ public class SaveData
     public int gems = 0;
     public bool SFXOn = true;
     public bool musicOn = true;
+    public int extraTime = 0;
+    public int skips = 0;
+    public int destroys = 0;
+    public int extraEnlarges = 0;
+    public int extraShrinks = 0;
 }
 

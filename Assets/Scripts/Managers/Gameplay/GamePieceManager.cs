@@ -14,6 +14,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     public GamePieceObject activeGamePiece { get; set; }
     public float score { get; set; }
+    public int curGems { get; set; }
     public float enlargeRemaining { get; set; }
     public float shrinkRemaining { get; set; }
     public float curEnlargeValue { get; set; }
@@ -53,14 +54,16 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public void InitRoundStats() {
         // Reset score
         score = 0;
+        pointsEarned = 0;
+        curGems = 0;
+
         // Largest chain
+        curMaxChain = 0;
 
         // Reset enlarge and shrink values
         enlargeRemaining = 50;
         shrinkRemaining = 50;
         tempEnlargeShrinkValue = 0;
-        pointsEarned = 0;
-        curMaxChain = 0;
 
         // Reset the connected objects
         curConnectedObjects.Clear();

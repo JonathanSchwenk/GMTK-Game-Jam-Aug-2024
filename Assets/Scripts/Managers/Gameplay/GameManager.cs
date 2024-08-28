@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using Dorkbots.ServiceLocatorTools;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour, IGameManager
 {
@@ -71,6 +72,7 @@ public class GameManager : MonoBehaviour, IGameManager
                 }
 
                 // Gems
+                inventoryManager.gems += gamePieceManager.curGems;
                 saveManager.saveData.gems = inventoryManager.gems;
 
                 // Inventory
@@ -86,6 +88,9 @@ public class GameManager : MonoBehaviour, IGameManager
         OnGameStateChanged?.Invoke(newState);
     } 
 
+    void OnApplicationQuit() {
+        saveManager.Save();
+    }
 
 }
 

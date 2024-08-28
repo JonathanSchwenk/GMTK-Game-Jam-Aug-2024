@@ -34,20 +34,18 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     private IGamePieceManager gamePieceManager;
     private IGameManager gameManager;
     private IAudioManager audioManager;
-    private IInventoryManager inventoryManager;
 
     // Start is called before the first frame update
     void Start() {
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         gameManager = ServiceLocator.Resolve<IGameManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
-        inventoryManager = ServiceLocator.Resolve<IInventoryManager>();
     }
 
     // Update is called once per frame
     void Update() {
         scoreValue.text = Mathf.RoundToInt(gamePieceManager.score).ToString();
-        gemsText.text = inventoryManager.gems.ToString();
+        gemsText.text = gamePieceManager.curGems.ToString();
         enlargeRemainingValue.text = gamePieceManager.enlargeRemaining.ToString();
         shrinkRemainingValue.text = gamePieceManager.shrinkRemaining.ToString();
         if (gamePieceManager.activeGamePiece != null) {

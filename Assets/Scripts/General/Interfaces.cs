@@ -40,6 +40,7 @@ public interface IAdManager {
 public interface IGamePieceManager {
     GamePieceObject activeGamePiece { get; set; }
     float score { get; set; }
+    int curGems { get; set; }
     float enlargeRemaining { get; set; }
     float shrinkRemaining { get; set; }
     float curEnlargeValue { get; set; }
@@ -68,6 +69,12 @@ public interface IPlayingCanvasManager {
 
 public interface IInventoryManager {
     int gems { get; set; }
+    int extraTime { get; set; }
+    int skips { get; set; }
+    int destroys { get; set; }
+    int extraEnlarges { get; set; }
+    int extraShrinks { get; set; }
+    void SaveInventory();
 }
 
 public interface IShopCanvasManager {
