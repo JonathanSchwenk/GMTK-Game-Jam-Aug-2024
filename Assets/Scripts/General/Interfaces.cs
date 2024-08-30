@@ -48,6 +48,7 @@ public interface IGamePieceManager {
     float pointsEarned { get; set; }
     float curMaxChain { get; set; }
     float tempEnlargeShrinkValue { get; set; }
+    bool activelyDestroying { get; set; }
 
     void InitRoundStats();
     void Place();
@@ -64,6 +65,7 @@ public interface IPlayingCanvasManager {
     void StartCountdown(float duration);
     void StopCountdown();
     float countdownTimer { get; set; }
+    float countdownTimerIncrement { get; set; }
     void ShowTappedPieceDescription(GameObject obj, string category, string name);
 }
 

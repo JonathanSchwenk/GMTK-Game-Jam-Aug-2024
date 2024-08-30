@@ -12,7 +12,9 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private TextMeshProUGUI categoryText;
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private TextMeshProUGUI pauseText;
+    // [SerializeField] private TextMeshProUGUI pauseText;
+    [SerializeField] private GameObject pauseIcon;
+    [SerializeField] private GameObject playIcon;
     [SerializeField] private TextMeshProUGUI pointsEarnedText;
     [SerializeField] private TextMeshProUGUI gemsText;
 
@@ -23,6 +25,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField, Header("Buttons"), Space(10)]
     private GameObject placeButtonOn;
     [SerializeField] private GameObject placeButtonOff;
+    // TODO: Shrink and enlarge button on and off
 
     [SerializeField, Header("Other GameObjects"), Space(10)]
     private GameObject spawner;
@@ -30,6 +33,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private TappedGamePieceDesc[] tappedPieceDescList;
 
     public float countdownTimer { get; set; }
+    public float countdownTimerIncrement { get; set; }
 
     private IGamePieceManager gamePieceManager;
     private IGameManager gameManager;
@@ -40,6 +44,8 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         gameManager = ServiceLocator.Resolve<IGameManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
+
+        countdownTimerIncrement = 0.1f;
     }
 
     // Update is called once per frame
@@ -59,7 +65,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         pointsEarnedText.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
 
         if (gamePieceManager.activeGamePiece != null) {
-            if (gamePieceManager.activeGamePiece.canPlace) {
+            if (gamePieceManager.activeGamePiece.canPlace && countdownTimerIncrement > 0) {
                 placeButtonOn.SetActive(true);
                 placeButtonOff.SetActive(false);
             } else {
@@ -82,13 +88,13 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     }
 
     public void OnEnlargeObjectPressed() {
-        if (Time.timeScale != 0) {
+        if (Time.timeScale != 0 && countdownTimerIncrement > 0) {
             gamePieceManager.Enlarge();
         }
     }
 
     public void OnShrinkObjectPressed() {
-        if (Time.timeScale != 0) {
+        if (Time.timeScale != 0 && countdownTimerIncrement > 0) {
             gamePieceManager.Shrink();
         }
     }
@@ -104,10 +110,14 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         if (gameManager.gameState != GameState.Tutorial) {
             audioManager.PlaySFX("UIClick_General");
             if (Time.timeScale == 0) {
-                pauseText.text = "Pause";
+                // pauseText.text = "Pause";
+                pauseIcon.SetActive(true);
+                playIcon.SetActive(false);
                 Time.timeScale = 1;
             } else {
-                pauseText.text = "Play";
+                // pauseText.text = "Play";
+                pauseIcon.SetActive(false);
+                playIcon.SetActive(true);
                 Time.timeScale = 0;
             }
         }
@@ -157,7 +167,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
             yield return new WaitForSeconds(0.1f);
 
             // Decrease the remaining time
-            countdownTimer -= 0.1f;
+            countdownTimer -= countdownTimerIncrement;
         }
 
         // Ensure remainingTime does not go negative
@@ -183,7 +193,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
                 tappedPieceDescList[i].nameText.text = name;
 
                 StartCoroutine(Utilities.DisableObjectAfterTime(tappedPieceDescList[i].tappedPiece, 2.5f));
-                
+
                 break;
             }
         }

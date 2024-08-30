@@ -22,6 +22,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public float pointsEarned { get; set; }
     public float curMaxChain { get; set; }
     public float tempEnlargeShrinkValue { get; set; }
+    public bool activelyDestroying { get; set; }
 
     private float weightMultiplier = 0.25f; // Multiplier to adjust weight scaling
     private float calculatedWeightMultiplier = 2.5f; // Multiplier to adjust weight scaling
@@ -90,7 +91,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     // Place
     public void Place() {
-        if (activeGamePiece != null && activeGamePiece.canPlace) {
+        if (activeGamePiece != null && activeGamePiece.canPlace && playingCanvasManager.countdownTimerIncrement > 0) {
             // Stop the timers coroutine
             playingCanvasManager.StopCountdown();
 
@@ -123,7 +124,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     # region gems
 
-    public void AddGems() {
+    private void AddGems() {
         int randomInt = UnityEngine.Random.Range(0, 100);
 
         if (randomInt < 100) {
@@ -141,18 +142,18 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     }
 
     private IEnumerator AddGemsOverTime(int gemsEarned, float duration) {
-        float startGems = inventoryManager.gems;
-        int targetGems = inventoryManager.gems + gemsEarned;
+        float startGems = curGems;
+        int targetGems = curGems + gemsEarned;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration) {
             elapsedTime += Time.deltaTime;
-            inventoryManager.gems = (int)Mathf.Lerp(startGems, targetGems, elapsedTime / duration);
+            curGems = (int)Mathf.Lerp(startGems, targetGems, elapsedTime / duration);
             yield return null; // Wait for the next frame
         }
 
         // Ensure the final value is set exactly to the target
-        inventoryManager.gems = (int)targetGems;
+        inventoryManager.gems = inventoryManager.gems + gemsEarned;
     }
 
     # endregion

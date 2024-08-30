@@ -9,6 +9,7 @@ public class CanvasManager : MonoBehaviour {
     [SerializeField] private GameObject tutorialCanvas;
     [SerializeField] private GameObject playingCanvas;
     [SerializeField] private GameObject gameOverCanvas;
+    [SerializeField] private GameObject worldSpaceActivePieceCanvas;
 
     private IGameManager gameManager;
 
@@ -37,10 +38,12 @@ public class CanvasManager : MonoBehaviour {
                 DeactivateAllCanvases();
                 tutorialCanvas.SetActive(true);
                 playingCanvas.SetActive(true);
+                worldSpaceActivePieceCanvas.SetActive(true);
                 break;
             case GameState.Playing:
                 DeactivateAllCanvases();
                 playingCanvas.SetActive(true);
+                worldSpaceActivePieceCanvas.SetActive(true);
                 break;
             case GameState.GameOver:
                 DeactivateAllCanvases();
@@ -60,6 +63,7 @@ public class CanvasManager : MonoBehaviour {
         tutorialCanvas.SetActive(false);
         playingCanvas.SetActive(false);
         gameOverCanvas.SetActive(false);
+        worldSpaceActivePieceCanvas.SetActive(false);
     }
 
     // Update is called once per frame

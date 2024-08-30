@@ -35,7 +35,7 @@ public class GamePieceObject : MonoBehaviour {
         if (!isPlaced) {
             if (collidingPieces.Count != 0) {
                 canPlace = false;
-                gameObject.transform.GetComponent<Renderer>().material.color = new Color(1, 0, 99/255, 1);
+                gameObject.transform.GetComponent<Renderer>().material.color = new Color(1, 0, 99 / 255, 1);
             } else {
                 canPlace = true;
                 gameObject.transform.GetComponent<Renderer>().material.color = originalColor;
@@ -46,13 +46,22 @@ public class GamePieceObject : MonoBehaviour {
     private void OnMouseDown() {
         // gamePieceManager.activeGamePiece = this; // For testing
         if (isPlaced) {
-            playingCanvasManager.ShowTappedPieceDescription(this.gameObject, category, gamePieceName);
+            if (gamePieceManager.activelyDestroying) {
+                // Destroy and deal with the subtraction of points
+                // Do this by acting as if you were going to place the piece to calculate the points and then subtract instead of add
+
+                // Continue timer
+                playingCanvasManager.countdownTimerIncrement = 0.1f;
+            } else {
+                // Show the description of the piece
+                playingCanvasManager.ShowTappedPieceDescription(this.gameObject, category, gamePieceName);
+            }
         }
     }
 
     // Move
     private void OnMouseDrag() {
-        if (!isPlaced && Time.timeScale != 0) {
+        if (!isPlaced && Time.timeScale != 0 && playingCanvasManager.countdownTimerIncrement > 0) {
             Vector3 pos = GetMouseWorldPosition();
             transform.position = new Vector3(pos.x, 0, pos.z);
         }
