@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Utilities {
     // Disables a GameObject after a specified delay
@@ -25,5 +27,23 @@ public class Utilities {
         );
 
         return canvasPos;
+    }
+
+    // Checks if you are hitting a UI element or canvas or not
+    public static bool IsClickOverUI(GraphicRaycaster graphicRaycaster, EventSystem eventSystem) {
+        PointerEventData pointerEventData = new PointerEventData(eventSystem) {
+            position = Input.mousePosition
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        graphicRaycaster.Raycast(pointerEventData, results);
+
+        foreach (RaycastResult result in results) {
+            if (result.gameObject.GetComponent<Graphic>() != null) {
+                return true; // Hit a UI element
+            }
+        }
+
+        return false; // No UI element was hit
     }
 }

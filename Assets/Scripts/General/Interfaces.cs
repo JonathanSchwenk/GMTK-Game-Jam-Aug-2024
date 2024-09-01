@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public interface IGameManager {
     GameState gameState { get; set; }
     Action<GameState> OnGameStateChanged { get; set; }
     void UpdateGameState(GameState state);
+    EventSystem eventSystem { get; set; }
 }
 
 public interface IObjectPooler {
@@ -52,6 +55,7 @@ public interface IGamePieceManager {
 
     void InitRoundStats();
     void Place();
+    void subtractPoints(GamePieceObject gamePiece);
     void Enlarge();
     void Shrink();
     float GetWeight(GameObject localGameObject);
@@ -79,6 +83,10 @@ public interface IInventoryManager {
     void SaveInventory();
 }
 
+public interface ICanvasManager {
+    GraphicRaycaster graphicRaycaster { get; set; }
+}
+
 public interface IShopCanvasManager {
 
 }
@@ -91,4 +99,8 @@ public interface IMenuCanvasManager {
     MenuCanvasState menuCanvasState { get; set; }
     Action<MenuCanvasState> OnMenuCanvasStateChanged { get; set; }
     void UpdateCanvasState(MenuCanvasState newState);
+}
+
+public interface IPowerupManager {
+    GameObject globalOgPowerupButton { get; }
 }

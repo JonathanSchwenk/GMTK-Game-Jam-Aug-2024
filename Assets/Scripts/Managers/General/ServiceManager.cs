@@ -11,9 +11,11 @@ public class ServiceManager : MonoBehaviour
     public GameManager gameManager;
     public GamePieceManager gamePieceManager;
     public SpawnManager spawnManager;
-    public PlayingCanvasManager playingCanvasManager;
     public InventoryManager inventoryManager;
+    public UsePowerupManager powerupManager;
     public MenuCanvasManager menuCanvasManager;
+    public PlayingCanvasManager playingCanvasManager;
+    public CanvasManager canvasManager;
 
     
 
@@ -58,6 +60,12 @@ public class ServiceManager : MonoBehaviour
         if (!ServiceLocator.IsRegistered<IMenuCanvasManager>()) {
             ServiceLocator.Register<IMenuCanvasManager>(menuCanvasManager);
         }
+        if (!ServiceLocator.IsRegistered<IPowerupManager>()) {
+            ServiceLocator.Register<IPowerupManager>(powerupManager);
+        }
+        if (!ServiceLocator.IsRegistered<ICanvasManager>()) {
+            ServiceLocator.Register<ICanvasManager>(canvasManager);
+        }
 
     }
 
@@ -90,6 +98,12 @@ public class ServiceManager : MonoBehaviour
         }
         if (ServiceLocator.IsRegistered<IMenuCanvasManager>()) {
             ServiceLocator.Unregister<IMenuCanvasManager>();
+        }
+        if (ServiceLocator.IsRegistered<IPowerupManager>()) {
+            ServiceLocator.Unregister<IPowerupManager>();
+        }
+        if (ServiceLocator.IsRegistered<ICanvasManager>()) {
+            ServiceLocator.Unregister<ICanvasManager>();
         }
     }
     

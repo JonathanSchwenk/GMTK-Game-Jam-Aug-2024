@@ -4,7 +4,7 @@ using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 using TMPro;
 
-public class UsePowerupManager : MonoBehaviour {
+public class UsePowerupManager : MonoBehaviour, IPowerupManager {
 
     [SerializeField] private GameObject ogPowerupButton;
     [SerializeField] private GameObject timeButton;
@@ -23,6 +23,8 @@ public class UsePowerupManager : MonoBehaviour {
     private IInventoryManager inventoryManager;
     private IPlayingCanvasManager playingCanvasManager;
     private IGamePieceManager gamePieceManager;
+
+    public GameObject globalOgPowerupButton { get { return ogPowerupButton; } }
 
     // Start is called before the first frame update
     void Start() {
@@ -158,7 +160,7 @@ public class UsePowerupManager : MonoBehaviour {
     // Destroy
     public void DestroyButton() {
         // Use destroy powerup
-        if (inventoryManager.destroys > 0) {
+        if (inventoryManager.destroys > 0 && gamePieceManager.score > 0) {
             inventoryManager.destroys--;
             inventoryManager.SaveInventory();
 

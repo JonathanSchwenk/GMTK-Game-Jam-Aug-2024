@@ -223,6 +223,26 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     // Calculate score
     private void CalculateScore(GamePieceObject gamePiece) {
+        // Add new
+        pointsEarned = GetPointsEarned(gamePiece);
+        if (pointsEarned > curMaxChain) {
+            curMaxChain = pointsEarned;
+        }
+
+        StartCoroutine(ChangePointsOverTime(pointsEarned, placeParticleEffectDuration / 2));
+    }
+
+    public void subtractPoints(GamePieceObject gamePiece) {
+        pointsEarned = GetPointsEarned(gamePiece);
+        pointsEarned = pointsEarned * -1;
+        print("Pints subtracted: " + pointsEarned);
+
+        startAddingPoints = true;
+
+        StartCoroutine(ChangePointsOverTime(pointsEarned, placeParticleEffectDuration / 2));
+    }
+
+    private float GetPointsEarned(GamePieceObject gamePiece) {
         // Need to add self to the list of connected objects because it starts the list
         curConnectedObjects.Add(gamePiece);
 
@@ -250,20 +270,18 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
         // Add new
         pointsEarned = addedWeight - subtractedWeight;
-        if (pointsEarned > curMaxChain) {
-            curMaxChain = pointsEarned;
-        }
-        // score += pointsEarned;
-
-        StartCoroutine(AddPointsOverTime(pointsEarned, placeParticleEffectDuration / 2));
 
         // Reset curConnectedObjects
         curConnectedObjects.Clear();
+
+        return pointsEarned;
     }
 
-    private IEnumerator AddPointsOverTime(float pointsEarned, float duration) {
+    private IEnumerator ChangePointsOverTime(float pointsEarned, float duration) {
         float startPoints = score;
         float targetPoints = score + pointsEarned;
+        print("StartPoints: " + startPoints);
+        print("Target Points: " + targetPoints);
         float elapsedTime = 0f;
 
         while (startAddingPoints != true) {

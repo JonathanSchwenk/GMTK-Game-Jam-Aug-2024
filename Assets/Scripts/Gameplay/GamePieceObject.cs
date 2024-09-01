@@ -22,11 +22,18 @@ public class GamePieceObject : MonoBehaviour {
 
     private IGamePieceManager gamePieceManager;
     private IPlayingCanvasManager playingCanvasManager;
+    private IPowerupManager powerupManager;
+    private ICanvasManager canvasManager;
+    private IGameManager gameManager;
 
     // Start is called before the first frame update
     void Start() {
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
+        powerupManager = ServiceLocator.Resolve<IPowerupManager>();
+        canvasManager = ServiceLocator.Resolve<ICanvasManager>();
+        gameManager = ServiceLocator.Resolve<IGameManager>();
+
         originalColor = gameObject.transform.GetComponent<Renderer>().material.color;
     }
 
@@ -49,10 +56,21 @@ public class GamePieceObject : MonoBehaviour {
             if (gamePieceManager.activelyDestroying) {
                 // Destroy and deal with the subtraction of points
                 // Do this by acting as if you were going to place the piece to calculate the points and then subtract instead of add
+                gamePieceManager.subtractPoints(this);
 
+                // Destroy the object
+                Destroy(gameObject);
+    
                 // Continue timer
                 playingCanvasManager.countdownTimerIncrement = 0.1f;
+
+                // change the icon back to the original
+                powerupManager.globalOgPowerupButton.transform.GetChild(1).gameObject.SetActive(true);
+                powerupManager.globalOgPowerupButton.transform.GetChild(2).gameObject.SetActive(false);
             } else {
+                if (Utilities.IsClickOverUI(canvasManager.graphicRaycaster, gameManager.eventSystem)) {
+                    return;
+                }
                 // Show the description of the piece
                 playingCanvasManager.ShowTappedPieceDescription(this.gameObject, category, gamePieceName);
             }

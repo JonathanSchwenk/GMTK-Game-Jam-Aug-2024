@@ -3,11 +3,13 @@ using System;
 using Dorkbots.ServiceLocatorTools;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour, IGameManager
 {
     public GameState gameState {get; set;}
     public Action<GameState> OnGameStateChanged {get; set;}
+    public EventSystem eventSystem { get; set; }
 
 
     private ISaveManager saveManager;
@@ -30,6 +32,7 @@ public class GameManager : MonoBehaviour, IGameManager
         gamePieceManager = ServiceLocator.Resolve<IGamePieceManager>();
         inventoryManager = ServiceLocator.Resolve<IInventoryManager>();
 
+        eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
         UpdateGameState(GameState.StartMenu);
     }
 

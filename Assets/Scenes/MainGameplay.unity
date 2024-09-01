@@ -24022,9 +24022,11 @@ MonoBehaviour:
   gameManager: {fileID: 352487721}
   gamePieceManager: {fileID: 1205958711}
   spawnManager: {fileID: 813193445}
-  playingCanvasManager: {fileID: 265768551}
   inventoryManager: {fileID: 2106429159}
+  powerupManager: {fileID: 109901204}
   menuCanvasManager: {fileID: 1095705881}
+  playingCanvasManager: {fileID: 265768551}
+  canvasManager: {fileID: 517775908}
 --- !u!1001 &711862855
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33693,6 +33695,81 @@ Transform:
   - {fileID: 314994251}
   m_Father: {fileID: 195502845}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &931206314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 931206315}
+  - component: {fileID: 931206317}
+  - component: {fileID: 931206316}
+  m_Layer: 0
+  m_Name: DestroyIcon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &931206315
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931206314}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2131960242}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 120}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &931206316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931206314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7a7298905cd604929b86694316f284e6, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &931206317
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931206314}
+  m_CullTransparentMesh: 1
 --- !u!1001 &932018057
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -49448,6 +49525,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 458593404}
     m_Modifications:
+    - target: {fileID: 2651150985997844607, guid: 94cce4a424ce14d13a5620a75c2d43c6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 109901204}
+    - target: {fileID: 2651150985997844607, guid: 94cce4a424ce14d13a5620a75c2d43c6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: DestroyButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 2651150985997844607, guid: 94cce4a424ce14d13a5620a75c2d43c6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UsePowerupManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 3076454596040720998, guid: 94cce4a424ce14d13a5620a75c2d43c6, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -71757,6 +71846,7 @@ RectTransform:
   m_Children:
   - {fileID: 1496803073}
   - {fileID: 179929077}
+  - {fileID: 931206315}
   - {fileID: 6155623}
   m_Father: {fileID: 213295239}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
