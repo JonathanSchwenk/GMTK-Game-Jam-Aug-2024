@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField, Header("UI Elements"), Space(10)]
@@ -23,9 +24,9 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private GameObject perspectiveCamera;
 
     [SerializeField, Header("Buttons"), Space(10)]
-    private GameObject placeButtonOn;
-    [SerializeField] private GameObject placeButtonOff;
-    // TODO: Shrink and enlarge button on and off
+    private GameObject placeButtonFill;
+    [SerializeField] private GameObject enlargeButtonFill;
+    [SerializeField] private GameObject shrinkButtonFill;
 
     [SerializeField, Header("Other GameObjects"), Space(10)]
     private GameObject spawner;
@@ -64,16 +65,37 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         timerText.text = countdownTimer.ToString("F1");
         pointsEarnedText.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
 
+        UpdateButtonsFill();
+    }
+
+    // Update the fill color of the buttons
+    private void UpdateButtonsFill() {
+        // Place button
         if (gamePieceManager.activeGamePiece != null) {
-            if (gamePieceManager.activeGamePiece.canPlace && countdownTimerIncrement > 0) {
-                placeButtonOn.SetActive(true);
-                placeButtonOff.SetActive(false);
+            if (gamePieceManager.activeGamePiece.canPlace && countdownTimerIncrement > 0 && Time.timeScale != 0) {
+                placeButtonFill.GetComponent<Image>().color = Constants.buttonOnColor;
             } else {
-                placeButtonOn.SetActive(false);
-                placeButtonOff.SetActive(true);
+                placeButtonFill.GetComponent<Image>().color = Constants.buttonOffColor;
             }
         }
+
+        // Enlarge button
+        if (gamePieceManager.enlargeRemaining > 0 && countdownTimerIncrement > 0 && Time.timeScale != 0) {
+            enlargeButtonFill.GetComponent<Image>().color = Constants.buttonOnColor;
+        } else {
+            enlargeButtonFill.GetComponent<Image>().color = Constants.buttonOffColor;
+        }
+
+        // Shrink button
+        if (gamePieceManager.shrinkRemaining > 0 && countdownTimerIncrement > 0 && Time.timeScale != 0) {
+            shrinkButtonFill.GetComponent<Image>().color = Constants.buttonOnColor;
+        } else {
+            shrinkButtonFill.GetComponent<Image>().color = Constants.buttonOffColor;
+        }
     }
+
+
+    # region Button Functions
 
     public void OnPlaceObjectPressed() {
         if (Time.timeScale != 0) {
@@ -147,7 +169,10 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         gamePieceManager.activeGamePiece.transform.position = spawner.transform.position;
     }
 
-    // Add this function to your existing PlayingCanvasManager script
+    #endregion
+
+    # region Coroutine Functions
+
     public void StartCountdown(float duration) {
         StartCoroutine(CountdownCoroutine(duration));
     }
@@ -179,6 +204,9 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         audioManager.StopMusic("GameplayMusic");
         gameManager.UpdateGameState(GameState.GameOver);
     }
+
+    #endregion
+
 
     public void ShowTappedPieceDescription(GameObject obj, string category, string name) {
         for (int i = 0; i < tappedPieceDescList.Length; i++) {

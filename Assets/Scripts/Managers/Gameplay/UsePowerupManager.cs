@@ -95,6 +95,10 @@ public class UsePowerupManager : MonoBehaviour, IPowerupManager {
 
     // Opens the powerup menu
     public void PowerUpButton() {
+        // Don't want to do anything if we are actively destroying
+        if (gamePieceManager.activelyDestroying) {
+            return;
+        }
         audioManager.PlaySFX("UIClick_General");
 
         // Stop time to allow you to pick something
