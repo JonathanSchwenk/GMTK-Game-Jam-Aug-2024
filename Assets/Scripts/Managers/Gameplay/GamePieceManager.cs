@@ -23,6 +23,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public float curMaxChain { get; set; }
     public float tempEnlargeShrinkValue { get; set; }
     public bool activelyDestroying { get; set; }
+    public float gamePieceArea { get; set; }
 
     private float weightMultiplier = 0.25f; // Multiplier to adjust weight scaling
     private float calculatedWeightMultiplier = 2.5f; // Multiplier to adjust weight scaling
@@ -84,7 +85,9 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
     // Update is called once per frame
     void Update() {
-
+        if (activeGamePiece != null) {
+            gamePieceArea = GetWeight(activeGamePiece.gameObject) / weightMultiplier;
+        }
     }
 
     # region Place

@@ -52,6 +52,7 @@ public interface IGamePieceManager {
     float curMaxChain { get; set; }
     float tempEnlargeShrinkValue { get; set; }
     bool activelyDestroying { get; set; }
+    float gamePieceArea { get; set; }
 
     void InitRoundStats();
     void Place();
@@ -103,4 +104,11 @@ public interface IMenuCanvasManager {
 
 public interface IPowerupManager {
     GameObject globalOgPowerupButton { get; }
+}
+
+public interface IMissionManager {
+    List<MissionData> dailyMissions { get; set; }
+    List<MissionData> allTimeMissions { get; set; }
+    void SpawnDailyMissions(GameObject missionPrefab, GameObject scrollContent);
+    void SpawnAllTimeMissions(GameObject missionPrefab, GameObject scrollContent);
 }

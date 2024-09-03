@@ -26,6 +26,8 @@ public class UsePowerupManager : MonoBehaviour, IPowerupManager {
 
     public GameObject globalOgPowerupButton { get { return ogPowerupButton; } }
 
+    // TODO: If you have no powerups then the button should be disabled visually
+
     // Start is called before the first frame update
     void Start() {
         audioManager = ServiceLocator.Resolve<IAudioManager>();

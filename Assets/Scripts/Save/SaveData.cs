@@ -16,5 +16,9 @@ public class SaveData
     public int destroys = 0;
     public int extraEnlarges = 0;
     public int extraShrinks = 0;
+
+    public long lastActive;
+    public List<MissionData> dailyMissions;
+    public List<MissionData> allTimeMissions;
 }
 

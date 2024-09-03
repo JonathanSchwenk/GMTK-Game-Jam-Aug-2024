@@ -16,6 +16,7 @@ public class ServiceManager : MonoBehaviour
     public MenuCanvasManager menuCanvasManager;
     public PlayingCanvasManager playingCanvasManager;
     public CanvasManager canvasManager;
+    public MissionManager missionManager;
 
     
 
@@ -66,6 +67,9 @@ public class ServiceManager : MonoBehaviour
         if (!ServiceLocator.IsRegistered<ICanvasManager>()) {
             ServiceLocator.Register<ICanvasManager>(canvasManager);
         }
+        if (!ServiceLocator.IsRegistered<IMissionManager>()) {
+            ServiceLocator.Register<IMissionManager>(missionManager);
+        }
 
     }
 
@@ -104,6 +108,9 @@ public class ServiceManager : MonoBehaviour
         }
         if (ServiceLocator.IsRegistered<ICanvasManager>()) {
             ServiceLocator.Unregister<ICanvasManager>();
+        }
+        if (ServiceLocator.IsRegistered<IMissionManager>()) {
+            ServiceLocator.Unregister<IMissionManager>();
         }
     }
     

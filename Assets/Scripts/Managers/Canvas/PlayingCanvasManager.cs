@@ -18,6 +18,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     [SerializeField] private GameObject playIcon;
     [SerializeField] private TextMeshProUGUI pointsEarnedText;
     [SerializeField] private TextMeshProUGUI gemsText;
+    [SerializeField] private TextMeshProUGUI areaText;
 
     [SerializeField, Header("Cameras"), Space(10)]
     private GameObject orthographicCamera;
@@ -64,6 +65,7 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
         }
         timerText.text = countdownTimer.ToString("F1");
         pointsEarnedText.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
+        areaText.text = gamePieceManager.gamePieceArea.ToString("F2");
 
         UpdateButtonsFill();
     }
