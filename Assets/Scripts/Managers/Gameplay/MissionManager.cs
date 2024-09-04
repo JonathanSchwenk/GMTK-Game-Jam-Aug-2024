@@ -29,11 +29,17 @@ public class MissionManager : MonoBehaviour, IMissionManager {
 
 
     private ISaveManager saveManager;
+    private IGameManager gameManager;
 
 
     // Start is called before the first frame update
     void Start() {
         saveManager = ServiceLocator.Resolve<ISaveManager>();
+        gameManager = ServiceLocator.Resolve<IGameManager>();
+
+        if (gameManager != null) {
+            gameManager.OnGameStateChanged += HandleGameStateChanged;
+        }
 
         if (saveManager.saveData.dailyMissions != null) {
             dailyMissions = saveManager.saveData.dailyMissions;
@@ -44,6 +50,63 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             allTimeMissions = saveManager.saveData.allTimeMissions;
         } else {
             allTimeMissions = new List<MissionData>();
+        }
+
+        // Need to init these lists
+        totalChains = new TotalChains() {
+            cityChains = new List<float>(),
+            egyptChains = new List<float>(),
+            japanChains = new List<float>(),
+            medievalChains = new List<float>(),
+            neighborhoodChains = new List<float>(),
+            pirateChains = new List<float>(),
+            scifiChains = new List<float>(),
+            westernChains = new List<float>()
+        };
+
+        totalAreas = new TotalAreas() {
+            cityAreas = new List<float>(),
+            egyptAreas = new List<float>(),
+            japanAreas = new List<float>(),
+            medievalAreas = new List<float>(),
+            neighborhoodAreas = new List<float>(),
+            pirateAreas = new List<float>(),
+            scifiAreas = new List<float>(),
+            westernAreas = new List<float>()
+        };
+        totalGamePieces = new TotalGamePieces() {
+            cityGamePieces = 0,
+            egyptGamePieces = 0,
+            japanGamePieces = 0,
+            medievalGamePieces = 0,
+            neighborhoodGamePieces = 0,
+            pirateGamePieces = 0,
+            scifiGamePieces = 0,
+            westernGamePieces = 0
+        };
+    }
+
+    private void HandleGameStateChanged(GameState newState) {
+        if (newState == GameState.GameOver) {
+            // Update missions
+            UpdateMissions(dailyMissions);
+            UpdateMissions(allTimeMissions);
+
+            // Save
+            saveManager.saveData.dailyMissions = new List<MissionData>(dailyMissions);
+            saveManager.saveData.allTimeMissions = new List<MissionData>(allTimeMissions);
+            saveManager.Save();
+
+            // Clear total lists
+            totalChains = new TotalChains();
+            totalAreas = new TotalAreas();
+            totalGamePieces = new TotalGamePieces();
+        }
+    }
+
+    private void OnDestroy() {
+        if (gameManager != null) {
+            gameManager.OnGameStateChanged -= HandleGameStateChanged;
         }
     }
 
@@ -58,8 +121,6 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         DateTime now = DateTime.Now;
         DateTime lastTime = new DateTime(saveManager.saveData.lastActive);
         // DateTime lastTime = new DateTime(2021, 1, 1);
-        print("Spawn Daily Missions");
-
         if (now.Day != lastTime.Day || saveManager.saveData.dailyMissions == null) {
             // Make new missions
             for (int i = 0; i < 10; i++) {
@@ -174,6 +235,7 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             GameObject gamePieceContent
         ) {
         if (saveManager.saveData.allTimeMissions.Count <= 0) {
+            print("New all time missions");
             // Chain
             GameObject titleChain = Instantiate(titlePrefab, chainTitle.transform);
             titleChain.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Chain Missions";
@@ -186,6 +248,25 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             GameObject titleGamePiece = Instantiate(titlePrefab, gamePieceTitle.transform);
             titleGamePiece.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Total Game Piece Missions";
             SpawnNewAllTime(missionPrefab, gamePieceContent, AllTimeMissionFile.gamePieceAllTimeSpawnData, 300, "GamePiece");
+
+            // Save the new missions
+            saveManager.saveData.allTimeMissions = new List<MissionData>(allTimeMissions);
+            saveManager.Save();
+        } else {
+            print("Load all time missions");
+            // Chain
+            GameObject titleChain = Instantiate(titlePrefab, chainTitle.transform);
+            titleChain.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Chain Missions";
+            SpawnExistingMissions(saveManager.saveData.allTimeMissions.Take(24).ToList(), missionPrefab, chainContent);
+            // Area
+            GameObject titleArea = Instantiate(titlePrefab, areaTitle.transform);
+            titleArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Area Missions";
+            SpawnExistingMissions(saveManager.saveData.allTimeMissions.Skip(24).Take(24).ToList(), missionPrefab, areaContent);
+            // Total Game Pieces
+            GameObject titleGamePiece = Instantiate(titlePrefab, gamePieceTitle.transform);
+            titleGamePiece.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Total Game Piece Missions";
+            SpawnExistingMissions(saveManager.saveData.allTimeMissions.Skip(48).Take(24).ToList(), missionPrefab, gamePieceContent);
+
         }
     }
 
@@ -225,13 +306,9 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             } else {
                 mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Place " + (int)allTimeMissionSpawnData[i].targetValue + " game pieces";
             }
+
+            allTimeMissions.Add(mission.GetComponent<MissionGameObject>().missionData);
         }
-    }
-
-
-    // For spawning old missions
-    private void SpawnExistingMissions(bool isDaily) {
-
     }
 
     private string[] GenerateRandomCategories(int randomCategoriesNum) {
@@ -245,23 +322,370 @@ public class MissionManager : MonoBehaviour, IMissionManager {
 
     // Function for updating missions. This will get called at the end of the game
     // This is going to be painful computationally but IDK how else to do it
-    public void UpdateMissions() {
-        // Look at each mission
-        // Check if the mission is incomplete, if yes then continue, else ignore
-        // Look at the mission type and thats how I know what to check, chain, area, or game piece
-        // Update the mission based on the values in the totalChains, totalAreas, and totalGamePieces
+    # region Update Missions
 
-        // Use array.Contains(target); for categories
-
-        /*
-            In GamePieceManager, there is a variable that I will make public that holds the previous chain before the new object is added.
-            I can use this to check against a total running list of chains and remove the chain that matches this previous value.
-            If the chain is not found, then just ignore for now.
-            But then add the new chain to the list.
-            This is so I don't just keep duplicating chains past a certain value. For example, if the mission was 5 chains
-            of 1000 and I got 1200, then added to it and got 2500, then added to it and got 5000. I don't want this to count as 3
-            times but just once. 
-        */
-
+    public void UpdateMissions(List<MissionData> missionListToUpdate) {
+        PreformUpdate(missionListToUpdate);
     }
+
+    private void PreformUpdate(List<MissionData> missionListToUpdate) {
+        for (int i = 0; i < missionListToUpdate.Count; i++) {
+            if (missionListToUpdate[i].status == "Incomplete") {
+                if (missionListToUpdate[i].missionType == "Chain") {
+                    CheckAndUpdateChainMissions(missionListToUpdate, i);
+                } else if (missionListToUpdate[i].missionType == "Area") {
+                    CheckAndUpdateAreaMissions(missionListToUpdate, i);
+                } else {
+                    CheckAndUpdateGamePieceMissions(missionListToUpdate, i);
+                }
+            }
+        }
+    }
+
+    # endregion
+
+    # region Check and update Missions
+
+    private void CheckAndUpdateChainMissions(List<MissionData> missionListToUpdate, int i) {
+        // For each mission, check the categories and see if I should increase the progress of the mission
+        for (int j = 0; j < missionListToUpdate[i].categories.Length; j++) {
+            if (missionListToUpdate[i].categories[j] == "All") {
+                missionListToUpdate[i].progressValue += 1;
+            } else {
+                switch (missionListToUpdate[i].categories[j]) {
+                    case "City":
+                        for (int k = 0; k < totalChains.cityChains.Count; k++) {
+                            if (totalChains.cityChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Egypt":
+                        for (int k = 0; k < totalChains.egyptChains.Count; k++) {
+                            if (totalChains.egyptChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Japan":
+                        for (int k = 0; k < totalChains.japanChains.Count; k++) {
+                            if (totalChains.japanChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Medieval":
+                        for (int k = 0; k < totalChains.medievalChains.Count; k++) {
+                            if (totalChains.medievalChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Neighborhood":
+                        for (int k = 0; k < totalChains.neighborhoodChains.Count; k++) {
+                            if (totalChains.neighborhoodChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Pirate":
+                        for (int k = 0; k < totalChains.pirateChains.Count; k++) {
+                            if (totalChains.pirateChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Scifi":
+                        for (int k = 0; k < totalChains.scifiChains.Count; k++) {
+                            if (totalChains.scifiChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Western":
+                        for (int k = 0; k < totalChains.westernChains.Count; k++) {
+                            if (totalChains.westernChains[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                // Check if the progress value is equal to the goal value, if so, then set the status to complete
+                if (missionListToUpdate[i].progressValue >= missionListToUpdate[i].goalValue) {
+                    missionListToUpdate[i].status = "Complete";
+                }
+            }
+        }
+    }
+
+    private void CheckAndUpdateAreaMissions(List<MissionData> missionListToUpdate, int i) {
+        // For each mission, check the categories and see if I should increase the progress of the mission
+        for (int j = 0; j < missionListToUpdate[i].categories.Length; j++) {
+            if (missionListToUpdate[i].categories[j] == "All") {
+                missionListToUpdate[i].progressValue += 1;
+            } else {
+                switch (missionListToUpdate[i].categories[j]) {
+                    case "City":
+                        for (int k = 0; k < totalAreas.cityAreas.Count; k++) {
+                            if (totalAreas.cityAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Egypt":
+                        for (int k = 0; k < totalAreas.egyptAreas.Count; k++) {
+                            if (totalAreas.egyptAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Japan":
+                        for (int k = 0; k < totalAreas.japanAreas.Count; k++) {
+                            if (totalAreas.japanAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Medieval":
+                        for (int k = 0; k < totalAreas.medievalAreas.Count; k++) {
+                            if (totalAreas.medievalAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Neighborhood":
+                        for (int k = 0; k < totalAreas.neighborhoodAreas.Count; k++) {
+                            if (totalAreas.neighborhoodAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Pirate":
+                        for (int k = 0; k < totalAreas.pirateAreas.Count; k++) {
+                            if (totalAreas.pirateAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Scifi":
+                        for (int k = 0; k < totalAreas.scifiAreas.Count; k++) {
+                            if (totalAreas.scifiAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    case "Western":
+                        for (int k = 0; k < totalAreas.westernAreas.Count; k++) {
+                            if (totalAreas.westernAreas[k] >= missionListToUpdate[i].targetValue) {
+                                missionListToUpdate[i].progressValue += 1;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                // Check if the progress value is equal to the goal value, if so, then set the status to complete
+                if (missionListToUpdate[i].progressValue >= missionListToUpdate[i].goalValue) {
+                    missionListToUpdate[i].status = "Complete";
+                }
+            }
+        }
+    }
+
+    private void CheckAndUpdateGamePieceMissions(List<MissionData> missionListToUpdate, int i) {
+        // For each mission, check the categories and see if I should increase the progress of the mission
+        for (int j = 0; j < missionListToUpdate[i].categories.Length; j++) {
+            if (missionListToUpdate[i].categories[j] == "All") {
+                missionListToUpdate[i].progressValue += 1;
+            } else {
+                switch (missionListToUpdate[i].categories[j]) {
+                    case "City":
+                        missionListToUpdate[i].progressValue += totalGamePieces.cityGamePieces;
+                        break;
+                    case "Egypt":
+                        missionListToUpdate[i].progressValue += totalGamePieces.egyptGamePieces;
+                        break;
+                    case "Japan":
+                        missionListToUpdate[i].progressValue += totalGamePieces.japanGamePieces;
+                        break;
+                    case "Medieval":
+                        missionListToUpdate[i].progressValue += totalGamePieces.medievalGamePieces;
+                        break;
+                    case "Neighborhood":
+                        missionListToUpdate[i].progressValue += totalGamePieces.neighborhoodGamePieces;
+                        break;
+                    case "Pirate":
+                        missionListToUpdate[i].progressValue += totalGamePieces.pirateGamePieces;
+                        break;
+                    case "Scifi":
+                        missionListToUpdate[i].progressValue += totalGamePieces.scifiGamePieces;
+                        break;
+                    case "Western":
+                        missionListToUpdate[i].progressValue += totalGamePieces.westernGamePieces;
+                        break;
+                    default:
+                        break;
+                }
+                // Check if the progress value is equal to the goal value, if so, then set the status to complete
+                if (missionListToUpdate[i].progressValue >= missionListToUpdate[i].goalValue) {
+                    missionListToUpdate[i].status = "Complete";
+                }
+            }
+        }
+    }
+
+    # endregion
+
+    # region add to total lists
+
+    public void AddToChainList(float chainValueToAdd, float? chainValueToRemove, string category) {
+        if (chainValueToRemove != null || chainValueToRemove != 0) {
+            CheckAndRemoveChains((float)chainValueToRemove, category);
+        }
+        AddChain(chainValueToAdd, category);
+    }
+
+    private void AddChain(float chainValue, string category) {
+        switch (category) {
+            case "City":
+                totalChains.cityChains.Add(chainValue);
+                break;
+            case "Egypt":
+                totalChains.egyptChains.Add(chainValue);
+                break;
+            case "Japan":
+                totalChains.japanChains.Add(chainValue);
+                break;
+            case "Medieval":
+                totalChains.medievalChains.Add(chainValue);
+                break;
+            case "Neighborhood":
+                totalChains.neighborhoodChains.Add(chainValue);
+                break;
+            case "Pirate":
+                totalChains.pirateChains.Add(chainValue);
+                break;
+            case "Scifi":
+                totalChains.scifiChains.Add(chainValue);
+                break;
+            case "Western":
+                totalChains.westernChains.Add(chainValue);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void CheckAndRemoveChains(float chainValue, string category) {
+        switch (category) {
+            case "City":
+                if (totalChains.cityChains.Contains(chainValue)) {
+                    totalChains.cityChains.Remove(chainValue);
+                }
+                break;
+            case "Egypt":
+                if (totalChains.egyptChains.Contains(chainValue)) {
+                    totalChains.egyptChains.Remove(chainValue);
+                }
+                break;
+            case "Japan":
+                if (totalChains.japanChains.Contains(chainValue)) {
+                    totalChains.japanChains.Remove(chainValue);
+                }
+                break;
+            case "Medieval":
+                if (totalChains.medievalChains.Contains(chainValue)) {
+                    totalChains.medievalChains.Remove(chainValue);
+                }
+                break;
+            case "Neighborhood":
+                if (totalChains.neighborhoodChains.Contains(chainValue)) {
+                    totalChains.neighborhoodChains.Remove(chainValue);
+                }
+                break;
+            case "Pirate":
+                if (totalChains.pirateChains.Contains(chainValue)) {
+                    totalChains.pirateChains.Remove(chainValue);
+                }
+                break;
+            case "Scifi":
+                if (totalChains.scifiChains.Contains(chainValue)) {
+                    totalChains.scifiChains.Remove(chainValue);
+                }
+                break;
+            case "Western":
+                if (totalChains.westernChains.Contains(chainValue)) {
+                    totalChains.westernChains.Remove(chainValue);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void AddToAreaList(float areaValue, string category) {
+        switch (category) {
+            case "City":
+                totalAreas.cityAreas.Add(areaValue);
+                break;
+            case "Egypt":
+                totalAreas.egyptAreas.Add(areaValue);
+                break;
+            case "Japan":
+                totalAreas.japanAreas.Add(areaValue);
+                break;
+            case "Medieval":
+                totalAreas.medievalAreas.Add(areaValue);
+                break;
+            case "Neighborhood":
+                totalAreas.neighborhoodAreas.Add(areaValue);
+                break;
+            case "Pirate":
+                totalAreas.pirateAreas.Add(areaValue);
+                break;
+            case "Scifi":
+                totalAreas.scifiAreas.Add(areaValue);
+                break;
+            case "Western":
+                totalAreas.westernAreas.Add(areaValue);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void AddToGamePieceList(string category) {
+        switch (category) {
+            case "City":
+                totalGamePieces.cityGamePieces++;
+                break;
+            case "Egypt":
+                totalGamePieces.egyptGamePieces++;
+                break;
+            case "Japan":
+                totalGamePieces.japanGamePieces++;
+                break;
+            case "Medieval":
+                totalGamePieces.medievalGamePieces++;
+                break;
+            case "Neighborhood":
+                totalGamePieces.neighborhoodGamePieces++;
+                break;
+            case "Pirate":
+                totalGamePieces.pirateGamePieces++;
+                break;
+            case "Scifi":
+                totalGamePieces.scifiGamePieces++;
+                break;
+            case "Western":
+                totalGamePieces.westernGamePieces++;
+                break;
+            default:
+                break;
+        }
+    }
+
+    # endregion
 }

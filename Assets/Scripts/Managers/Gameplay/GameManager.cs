@@ -22,8 +22,9 @@ public class GameManager : MonoBehaviour, IGameManager
 
     void OnDestroy() {
         OnGameStateChanged = null;
-        saveManager.saveData.lastActive = DateTime.Now.Ticks;
-        saveManager.Save();
+        // Might not need this because its on application quit
+        // saveManager.saveData.lastActive = DateTime.Now.Ticks;
+        // saveManager.Save();
     }
 
     // Sets the state to ready when the game starts 

@@ -120,4 +120,10 @@ public interface IMissionManager {
         GameObject gamePieceTitle,
         GameObject gamePieceContent
     );
+
+    void UpdateMissions(List<MissionData> missionListToUpdate);
+
+    void AddToChainList(float chainValueToAdd, float? chainValueToRemove, string category);
+    void AddToAreaList(float areaValue, string category);
+    void AddToGamePieceList(string category);
 }

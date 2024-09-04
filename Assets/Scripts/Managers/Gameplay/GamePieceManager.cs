@@ -44,12 +44,15 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     private IPlayingCanvasManager playingCanvasManager;
     private IAudioManager audioManager;
     private IInventoryManager inventoryManager;
+    private IMissionManager missionManager;
 
     // Start is called before the first frame update
     void Start() {
         playingCanvasManager = ServiceLocator.Resolve<IPlayingCanvasManager>();
         audioManager = ServiceLocator.Resolve<IAudioManager>();
         inventoryManager = ServiceLocator.Resolve<IInventoryManager>();
+        missionManager = ServiceLocator.Resolve<IMissionManager>();
+
         InitRoundStats();
     }
 
@@ -114,6 +117,14 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
             CalculateScore(activeGamePiece);
 
             activeGamePiece.isPlaced = true;
+
+            // Add to total lists in the mission manager for later
+            // Chain is done in the CalculateScore function
+            // Area
+            missionManager.AddToAreaList(GetArea(activeGamePiece.gameObject), activeGamePiece.category);
+
+            // Game Piece
+            missionManager.AddToGamePieceList(activeGamePiece.category);
 
             // Reset the active game piece
             activeGamePiece.gameObject.GetComponent<MeshCollider>().isTrigger = false;
@@ -253,20 +264,14 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
 
         // Calculate the score based on the number of connected objects
         float tempRunningWeight = 0;
-        float tempSubtraction = 0;
         for (int i = 0; i < curConnectedObjects.Count; i++) {
             // print("Connected object: " + curConnectedObjects[i].name);
             // print("Connected object weight: " + curConnectedObjects[i].weight);
             tempRunningWeight += curConnectedObjects[i].weight;
         }
 
-        // Subtract previous chain or weights/objects from the score to not double count
-        // Do this by repeating but leave out the active game piece
-        for (int i = 1; i < curConnectedObjects.Count; i++) {
-            // print("Connected object: " + curConnectedObjects[i].name);
-            // print("Connected object weight: " + curConnectedObjects[i].weight);
-            tempSubtraction += curConnectedObjects[i].weight;
-        }
+        // Subtract previous chain 
+        float tempSubtraction = GetPointsToSubtract(curConnectedObjects);
 
         float addedWeight = curConnectedObjects.Count * tempRunningWeight * calculatedWeightMultiplier;
         float subtractedWeight = (curConnectedObjects.Count - 1) * tempSubtraction * calculatedWeightMultiplier;
@@ -274,10 +279,26 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
         // Add new
         pointsEarned = addedWeight - subtractedWeight;
 
+        // totalChainList in the mission manager for later
+        missionManager.AddToChainList(pointsEarned, tempSubtraction, gamePiece.category);
+
         // Reset curConnectedObjects
         curConnectedObjects.Clear();
 
         return pointsEarned;
+    }
+
+    // Subtract previous chain or weights/objects from the score to not double count
+        // Do this by repeating but leave out the active game piece
+    private float GetPointsToSubtract(List<GamePieceObject> curConnectedObjects) {
+        float tempSubtraction = 0;
+        for (int i = 1; i < curConnectedObjects.Count; i++) {
+            // print("Connected object: " + curConnectedObjects[i].name);
+            // print("Connected object weight: " + curConnectedObjects[i].weight);
+            tempSubtraction += curConnectedObjects[i].weight;
+        }
+
+        return tempSubtraction;
     }
 
     private IEnumerator ChangePointsOverTime(float pointsEarned, float duration) {
@@ -403,31 +424,32 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     public float GetWeight(GameObject localGameObject) {
         Mesh mesh = localGameObject.GetComponent<MeshFilter>().sharedMesh;
 
-        if (mesh != null) {
-            // Calculate the size of the mesh using its bounds
-            Vector3 size = mesh.bounds.size;
-            Vector3 scaledSize = Vector3.Scale(size, localGameObject.transform.localScale);
-            // print("scaledSize: " + scaledSize);
+        float area =GetArea(localGameObject);
+        // print("Volume: " + volume);
 
-            // Calculate a simple volume (or use another method based on your requirements)
-            // float volume = scaledSize.x * scaledSize.y * scaledSize.z;
-            float area = scaledSize.x * scaledSize.z;
-            // print("Volume: " + volume);
+        // Assign weight based on the volume
+        float weight = area * weightMultiplier;
+        // print("Weight: " + weight);
 
-            // Assign weight based on the volume
-            float weight = area * weightMultiplier;
-            // print("Weight: " + weight);
-
-            return weight;
-        } else {
-            print($"MeshFilter on {localGameObject.name} does not have a mesh assigned.");
-            return 0f;
-        }
+        return weight;
     }
 
     // Call this when you, create the game piece, shrink or enlarge, or place the game piece
     private void AssignWeight() {
         activeGamePiece.weight = GetWeight(activeGamePiece.gameObject);
+    }
+
+    private float GetArea(GameObject localGameObject) {
+        float returnArea = 0f;
+        Mesh mesh = localGameObject.GetComponent<MeshFilter>().sharedMesh;
+        if (mesh != null) {
+            Vector3 size = mesh.bounds.size;
+            Vector3 scaledSize = Vector3.Scale(size, localGameObject.transform.localScale);
+            returnArea = scaledSize.x * scaledSize.z;
+        } else {
+            print($"MeshFilter on {localGameObject.name} does not have a mesh assigned.");
+        }
+        return returnArea;
     }
 
     # endregion

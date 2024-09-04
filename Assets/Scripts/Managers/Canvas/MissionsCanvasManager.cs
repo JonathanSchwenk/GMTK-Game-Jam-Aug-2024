@@ -24,12 +24,14 @@ public class MissionsCanvasManager : MonoBehaviour
 
     private IMenuCanvasManager menuCanvasManager;
     private IMissionManager missionManager;
+    private IAudioManager audioManager;
 
     // Start is called before the first frame update
     void Start()
     {
         menuCanvasManager = ServiceLocator.Resolve<IMenuCanvasManager>();
         missionManager = ServiceLocator.Resolve<IMissionManager>();
+        audioManager = ServiceLocator.Resolve<IAudioManager>();
 
         SpawnDailyMissions();
         SpawnAllTimeMissions();
@@ -61,11 +63,13 @@ public class MissionsCanvasManager : MonoBehaviour
     // Button for submitting a mission, this is done in the Mission game object
 
     public void OnBackButtonPressed() {
+        audioManager.PlaySFX("UIClick_General");
         // Close the shop
         menuCanvasManager.UpdateCanvasState(MenuCanvasState.Start);
     }
 
     public void toDailyMissions() {
+        audioManager.PlaySFX("UIClick_General");
         daily.SetActive(true);
         allTime.SetActive(false);
 
@@ -76,6 +80,7 @@ public class MissionsCanvasManager : MonoBehaviour
     }
 
     public void toAllTimeMissions() {
+        audioManager.PlaySFX("UIClick_General");
         daily.SetActive(false);
         allTime.SetActive(true);
 

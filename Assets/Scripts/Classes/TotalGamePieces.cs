@@ -5,12 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class TotalGamePieces
 {
-    public List<int> cityGamePieces { get; set; }
-    public List<int> egyptGamePieces { get; set; }
-    public List<int> japanGamePieces { get; set; }
-    public List<int> medievalGamePieces { get; set; }
-    public List<int> neighborhoodGamePieces { get; set; }
-    public List<int> pirateGamePieces { get; set; }
-    public List<int> scifiGamePieces { get; set; }
-    public List<int> westernGamePieces { get; set; }
+    public int cityGamePieces { get; set; }
+    public int egyptGamePieces { get; set; }
+    public int japanGamePieces { get; set; }
+    public int medievalGamePieces { get; set; }
+    public int neighborhoodGamePieces { get; set; }
+    public int pirateGamePieces { get; set; }
+    public int scifiGamePieces { get; set; }
+    public int westernGamePieces { get; set; }
 }
