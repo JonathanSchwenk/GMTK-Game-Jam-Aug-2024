@@ -31,4 +31,6 @@ public class MissionGameObject : MonoBehaviour
         progressText.text = missionData.progressValue + " / " + missionData.goalValue;
         rewardText.text = missionData.reward.ToString();
     }
+
+    // Need a button for submitting a mission
 }

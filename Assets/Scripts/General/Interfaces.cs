@@ -110,5 +110,14 @@ public interface IMissionManager {
     List<MissionData> dailyMissions { get; set; }
     List<MissionData> allTimeMissions { get; set; }
     void SpawnDailyMissions(GameObject missionPrefab, GameObject scrollContent);
-    void SpawnAllTimeMissions(GameObject missionPrefab, GameObject scrollContent);
+    void SpawnAllTimeMissions(
+        GameObject missionPrefab,
+        GameObject titlePrefab,
+        GameObject chainTitle,
+        GameObject chainContent,
+        GameObject areaTitle,
+        GameObject areaContent,
+        GameObject gamePieceTitle,
+        GameObject gamePieceContent
+    );
 }

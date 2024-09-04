@@ -5,6 +5,7 @@ using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 using UnityEngine.PlayerLoop;
 using System.Linq;
+using TMPro;
 
 public class MissionManager : MonoBehaviour, IMissionManager {
 
@@ -57,6 +58,7 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         DateTime now = DateTime.Now;
         DateTime lastTime = new DateTime(saveManager.saveData.lastActive);
         // DateTime lastTime = new DateTime(2021, 1, 1);
+        print("Spawn Daily Missions");
 
         if (now.Day != lastTime.Day || saveManager.saveData.dailyMissions == null) {
             // Make new missions
@@ -72,24 +74,24 @@ public class MissionManager : MonoBehaviour, IMissionManager {
                 }
             }
             // Save the new missions
-            saveManager.saveData.dailyMissions = dailyMissions;
+            saveManager.saveData.dailyMissions = new List<MissionData>(dailyMissions);
             saveManager.Save();
 
         } else {
             // Load the old missions
-            SpawnExistingMissions(dailyMissions, missionPrefab, scrollContent);
+            SpawnExistingMissions(saveManager.saveData.dailyMissions, missionPrefab, scrollContent);
         }
     }
 
     private void SpawnNewDaily(GameObject missionPrefab, GameObject scrollContent, string missionType, int index) {
         GameObject mission = Instantiate(missionPrefab, scrollContent.transform);
-        mission.GetComponent<MissionGameObject>().missionData = new MissionData();
+        mission.GetComponent<MissionGameObject>().missionData = new MissionData {
+            // Set mission ID
+            missionID = index,
 
-        // Set mission ID
-        mission.GetComponent<MissionGameObject>().missionData.missionID = index;
-
-        // Set mission type
-        mission.GetComponent<MissionGameObject>().missionData.missionType = missionType;
+            // Set mission type
+            missionType = missionType
+        };
 
         // Set categories
         int randomCategories = UnityEngine.Random.Range(1, 6);
@@ -161,29 +163,71 @@ public class MissionManager : MonoBehaviour, IMissionManager {
     }
 
     // Spawn All Time Missions
-    // This is going to read in from a file or something to get the values
-    // Set id, can do this with the index because I know there are only ten daily missions and then I can just 
-    // start at 100 and add the index for all time missions
-    public void SpawnAllTimeMissions(GameObject missionPrefab, GameObject scrollContent) {
-        if (saveManager.saveData.dailyMissions == null) {
+    public void SpawnAllTimeMissions(
+            GameObject titlePrefab,
+            GameObject missionPrefab,
+            GameObject chainTitle,
+            GameObject chainContent,
+            GameObject areaTitle,
+            GameObject areaContent,
+            GameObject gamePieceTitle,
+            GameObject gamePieceContent
+        ) {
+        if (saveManager.saveData.allTimeMissions.Count <= 0) {
             // Chain
-            for (int i = 0; i < 24; i++) {
-
-            }
+            GameObject titleChain = Instantiate(titlePrefab, chainTitle.transform);
+            titleChain.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Chain Missions";
+            SpawnNewAllTime(missionPrefab, chainContent, AllTimeMissionFile.chainAllTimeSpawnData, 100, "Chain");
             // Area
-            for (int i = 0; i < 24; i++) {
-
-            }
+            GameObject titleArea = Instantiate(titlePrefab, areaTitle.transform);
+            titleArea.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Area Missions";
+            SpawnNewAllTime(missionPrefab, areaContent, AllTimeMissionFile.areaAllTimeSpawnData, 200, "Area");
             // Total Game Pieces
-            for (int i = 0; i < 24; i++) {
+            GameObject titleGamePiece = Instantiate(titlePrefab, gamePieceTitle.transform);
+            titleGamePiece.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Total Game Piece Missions";
+            SpawnNewAllTime(missionPrefab, gamePieceContent, AllTimeMissionFile.gamePieceAllTimeSpawnData, 300, "GamePiece");
+        }
+    }
 
+    private void SpawnNewAllTime(GameObject missionPrefab, GameObject scrollContent, List<AllTimeMissionSpawnData> allTimeMissionSpawnData, int startingIndex, string missionType) {
+        for (int i = 0; i < 24; i++) { // 24 is the amount of missions there are for a missionType
+            GameObject mission = Instantiate(missionPrefab, scrollContent.transform);
+            mission.GetComponent<MissionGameObject>().missionData = new MissionData {
+                // Set mission ID
+                missionID = startingIndex + i,
+
+                // Set mission type
+                missionType = missionType,
+
+                // Set categories
+                categories = allTimeMissionSpawnData[i].categories,
+
+                // Sets status
+                status = "Incomplete",
+
+                // Sets mission target value
+                targetValue = allTimeMissionSpawnData[i].targetValue,
+
+                // Set progress value
+                progressValue = 0,
+
+                // Set goal value
+                goalValue = allTimeMissionSpawnData[i].goalValue,
+
+                // Reward
+                reward = allTimeMissionSpawnData[i].reward
+            };
+            // Set mission description
+            if (missionType == "Chain") {
+                mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Make " + allTimeMissionSpawnData[i].goalValue + " chains equal to " + allTimeMissionSpawnData[i].targetValue + " points or more";
+            } else if (missionType == "Area") {
+                mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Place " + allTimeMissionSpawnData[i].goalValue + " pieces with and area of " + allTimeMissionSpawnData[i].targetValue + " or more";
+            } else {
+                mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Place " + (int)allTimeMissionSpawnData[i].targetValue + " game pieces";
             }
         }
     }
 
-    private void SpawnNewAllTime(GameObject missionPrefab, GameObject scrollContent, string missionType, int index) {
-
-    }
 
     // For spawning old missions
     private void SpawnExistingMissions(bool isDaily) {
