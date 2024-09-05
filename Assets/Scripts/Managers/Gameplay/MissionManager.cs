@@ -30,12 +30,14 @@ public class MissionManager : MonoBehaviour, IMissionManager {
 
     private ISaveManager saveManager;
     private IGameManager gameManager;
+    private IInventoryManager inventoryManager;
 
 
     // Start is called before the first frame update
     void Start() {
         saveManager = ServiceLocator.Resolve<ISaveManager>();
         gameManager = ServiceLocator.Resolve<IGameManager>();
+        inventoryManager = ServiceLocator.Resolve<IInventoryManager>();
 
         if (gameManager != null) {
             gameManager.OnGameStateChanged += HandleGameStateChanged;
@@ -119,13 +121,13 @@ public class MissionManager : MonoBehaviour, IMissionManager {
     public void SpawnDailyMissions(GameObject missionPrefab, GameObject scrollContent) {
         // Check if its a new day, if it is or if its null, then make new missions, else load the old missions
         DateTime now = DateTime.Now;
-        DateTime lastTime = new DateTime(saveManager.saveData.lastActive);
-        // DateTime lastTime = new DateTime(2021, 1, 1);
-
-        // Clear to reset
-        dailyMissions.Clear();
+        // DateTime lastTime = new DateTime(saveManager.saveData.lastActive);
+        DateTime lastTime = new DateTime(2021, 1, 1);
 
         if (now.Day != lastTime.Day || saveManager.saveData.dailyMissions.Count <= 0) {
+            // Clear to reset
+            dailyMissions.Clear();
+
             // Make new missions
             for (int i = 0; i < 10; i++) {
                 // Pick a random mission type
@@ -173,15 +175,15 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         // Sets mission target value
         float targetValue = 0;
         if (missionType == "Chain") {
-            int randomChain = UnityEngine.Random.Range(5, 11);
+            int randomChain = UnityEngine.Random.Range(3, 7);
             targetValue = randomChain * 1000;
             mission.GetComponent<MissionGameObject>().missionData.targetValue = targetValue;
         } else if (missionType == "Area") {
-            int randomArea = UnityEngine.Random.Range(5, 11); // 1000 area might be too much
+            int randomArea = UnityEngine.Random.Range(4, 8); // 1000 area might be too much
             targetValue = randomArea * 100;
             mission.GetComponent<MissionGameObject>().missionData.targetValue = targetValue;
         } else {
-            int randomGamePiece = UnityEngine.Random.Range(10, 21);
+            int randomGamePiece = UnityEngine.Random.Range(5, 11);
             targetValue = randomGamePiece * 10;
             mission.GetComponent<MissionGameObject>().missionData.targetValue = targetValue;
         }
@@ -201,9 +203,9 @@ public class MissionManager : MonoBehaviour, IMissionManager {
 
         // Set mission description
         if (missionType == "Chain") {
-            mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Make " + randomGoalInt + " chains equal to " + targetValue + " points or more";
+            mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Make " + mission.GetComponent<MissionGameObject>().missionData.goalValue + " chains equal to " + targetValue + " points or more";
         } else if (missionType == "Area") {
-            mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Place " + randomGoalInt + " pieces with and area of " + targetValue + " or more";
+            mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Place " + mission.GetComponent<MissionGameObject>().missionData.goalValue + " pieces with and area of " + targetValue + " or more";
         } else {
             mission.GetComponent<MissionGameObject>().missionData.missionDesc = "Place " + (int)targetValue + " game pieces";
         }
@@ -238,7 +240,7 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             GameObject gamePieceTitle,
             GameObject gamePieceContent
         ) {
-        if (saveManager.saveData.allTimeMissions.Count <= 0) {
+        if (saveManager.saveData.allTimeMissions == null || saveManager.saveData.allTimeMissions.Count <= 0) {
             // Chain
             GameObject titleChain = Instantiate(titlePrefab, chainTitle.transform);
             titleChain.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Chain Missions";
@@ -325,6 +327,26 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         return categories;
     }
 
+    public void SubmitMission(GameObject go) {
+        MissionData missionData = go.transform.GetComponent<MissionGameObject>().missionData;
+        if (missionData.status == "Complete") {
+            // Give the reward
+            inventoryManager.gems += missionData.reward;
+            inventoryManager.SaveInventory();
+            // Set the status to submitted
+            missionData.status = "Submitted";
+            // Display the reward particle effect
+            go.transform.GetChild(0).gameObject.SetActive(true);
+            // Disable the mission after 5 seconds
+            StartCoroutine(submitMissionCoroutine(go.transform.GetChild(0).gameObject));
+        }
+    }
+
+    private IEnumerator submitMissionCoroutine(GameObject go) {
+        yield return new WaitForSeconds(5f);
+        go.SetActive(false);
+    }
+
     // Function for updating missions. This will get called at the end of the game
     // This is going to be painful computationally but IDK how else to do it
     # region Update Missions
@@ -343,7 +365,14 @@ public class MissionManager : MonoBehaviour, IMissionManager {
                 } else {
                     CheckAndUpdateGamePieceMissions(missionListToUpdate, i);
                 }
+                ChangeStatusOfMission(missionListToUpdate, i);
             }
+        }
+    }
+
+    private void ChangeStatusOfMission(List<MissionData> missionListToUpdate, int i) {
+        if (missionListToUpdate[i].progressValue >= missionListToUpdate[i].goalValue) {
+            missionListToUpdate[i].status = "Complete";
         }
     }
 

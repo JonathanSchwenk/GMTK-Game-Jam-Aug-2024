@@ -122,7 +122,7 @@ public interface IMissionManager {
     );
 
     void UpdateMissions(List<MissionData> missionListToUpdate);
-
+    void SubmitMission(GameObject go);
     void AddToChainList(float chainValueToAdd, float? chainValueToRemove, string category);
     void AddToAreaList(float areaValue, string category);
     void AddToGamePieceList(string category);
