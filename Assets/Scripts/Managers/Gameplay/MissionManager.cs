@@ -121,7 +121,11 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         DateTime now = DateTime.Now;
         DateTime lastTime = new DateTime(saveManager.saveData.lastActive);
         // DateTime lastTime = new DateTime(2021, 1, 1);
-        if (now.Day != lastTime.Day || saveManager.saveData.dailyMissions == null) {
+
+        // Clear to reset
+        dailyMissions.Clear();
+
+        if (now.Day != lastTime.Day || saveManager.saveData.dailyMissions.Count <= 0) {
             // Make new missions
             for (int i = 0; i < 10; i++) {
                 // Pick a random mission type
@@ -235,7 +239,6 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             GameObject gamePieceContent
         ) {
         if (saveManager.saveData.allTimeMissions.Count <= 0) {
-            print("New all time missions");
             // Chain
             GameObject titleChain = Instantiate(titlePrefab, chainTitle.transform);
             titleChain.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Chain Missions";
@@ -253,7 +256,6 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             saveManager.saveData.allTimeMissions = new List<MissionData>(allTimeMissions);
             saveManager.Save();
         } else {
-            print("Load all time missions");
             // Chain
             GameObject titleChain = Instantiate(titlePrefab, chainTitle.transform);
             titleChain.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Chain Missions";
@@ -315,6 +317,9 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         string[] categories = new string[randomCategoriesNum];
         for (int i = 0; i < randomCategoriesNum; i++) {
             int randomCategory = UnityEngine.Random.Range(0, categoriesList.Length);
+            while (categories.Contains(categoriesList[randomCategory])) {
+                randomCategory = UnityEngine.Random.Range(0, categoriesList.Length);
+            }
             categories[i] = categoriesList[randomCategory];
         }
         return categories;
@@ -350,7 +355,47 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         // For each mission, check the categories and see if I should increase the progress of the mission
         for (int j = 0; j < missionListToUpdate[i].categories.Length; j++) {
             if (missionListToUpdate[i].categories[j] == "All") {
-                missionListToUpdate[i].progressValue += 1;
+                for (int k = 0; k < totalChains.cityChains.Count; k++) {
+                    if (totalChains.cityChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalChains.egyptChains.Count; k++) {
+                    if (totalChains.egyptChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalChains.japanChains.Count; k++) {
+                    if (totalChains.japanChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalChains.medievalChains.Count; k++) {
+                    if (totalChains.medievalChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalChains.neighborhoodChains.Count; k++) {
+                    if (totalChains.neighborhoodChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalChains.pirateChains.Count; k++) {
+                    if (totalChains.pirateChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalChains.scifiChains.Count; k++) {
+                    if (totalChains.scifiChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalChains.westernChains.Count; k++) {
+                    if (totalChains.westernChains[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+
             } else {
                 switch (missionListToUpdate[i].categories[j]) {
                     case "City":
@@ -424,7 +469,46 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         // For each mission, check the categories and see if I should increase the progress of the mission
         for (int j = 0; j < missionListToUpdate[i].categories.Length; j++) {
             if (missionListToUpdate[i].categories[j] == "All") {
-                missionListToUpdate[i].progressValue += 1;
+                for (int k = 0; k < totalAreas.cityAreas.Count; k++) {
+                    if (totalAreas.cityAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalAreas.egyptAreas.Count; k++) {
+                    if (totalAreas.egyptAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalAreas.japanAreas.Count; k++) {
+                    if (totalAreas.japanAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalAreas.medievalAreas.Count; k++) {
+                    if (totalAreas.medievalAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalAreas.neighborhoodAreas.Count; k++) {
+                    if (totalAreas.neighborhoodAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalAreas.pirateAreas.Count; k++) {
+                    if (totalAreas.pirateAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalAreas.scifiAreas.Count; k++) {
+                    if (totalAreas.scifiAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
+                for (int k = 0; k < totalAreas.westernAreas.Count; k++) {
+                    if (totalAreas.westernAreas[k] >= missionListToUpdate[i].targetValue) {
+                        missionListToUpdate[i].progressValue += 1;
+                    }
+                }
             } else {
                 switch (missionListToUpdate[i].categories[j]) {
                     case "City":
@@ -498,7 +582,14 @@ public class MissionManager : MonoBehaviour, IMissionManager {
         // For each mission, check the categories and see if I should increase the progress of the mission
         for (int j = 0; j < missionListToUpdate[i].categories.Length; j++) {
             if (missionListToUpdate[i].categories[j] == "All") {
-                missionListToUpdate[i].progressValue += 1;
+                missionListToUpdate[i].progressValue += totalGamePieces.cityGamePieces;
+                missionListToUpdate[i].progressValue += totalGamePieces.egyptGamePieces;
+                missionListToUpdate[i].progressValue += totalGamePieces.japanGamePieces;
+                missionListToUpdate[i].progressValue += totalGamePieces.medievalGamePieces;
+                missionListToUpdate[i].progressValue += totalGamePieces.neighborhoodGamePieces;
+                missionListToUpdate[i].progressValue += totalGamePieces.pirateGamePieces;
+                missionListToUpdate[i].progressValue += totalGamePieces.scifiGamePieces;
+                missionListToUpdate[i].progressValue += totalGamePieces.westernGamePieces;
             } else {
                 switch (missionListToUpdate[i].categories[j]) {
                     case "City":

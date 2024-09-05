@@ -141,7 +141,7 @@ public class GamePieceManager : MonoBehaviour, IGamePieceManager {
     private void AddGems() {
         int randomInt = UnityEngine.Random.Range(0, 100);
 
-        if (randomInt < 100) {
+        if (randomInt < 10) {
             int randomGems = UnityEngine.Random.Range(1, 5);
             HandleGemsParticleEffect(randomGems);
             StartCoroutine(WaitToAddGems(randomGems, placeParticleEffectDuration / 2));
