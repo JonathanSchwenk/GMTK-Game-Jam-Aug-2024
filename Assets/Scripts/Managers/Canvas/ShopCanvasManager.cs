@@ -44,8 +44,8 @@ public class ShopCanvasManager : MonoBehaviour
 
     public void OnExtraTimeButtonPressed() {
         // Buy extra time
-        if (inventoryManager.gems <= int.Parse(extraTime.costText.text)) {
-        // if (inventoryManager.gems >= int.Parse(extraTime.costText.text)) {
+        // if (inventoryManager.gems <= int.Parse(extraTime.costText.text)) {
+        if (inventoryManager.gems >= int.Parse(extraTime.costText.text)) {
             inventoryManager.gems -= int.Parse(extraTime.costText.text);
             inventoryManager.extraTime++;
             inventoryManager.SaveInventory();
@@ -54,8 +54,8 @@ public class ShopCanvasManager : MonoBehaviour
 
     public void OnSkipsButtonPressed() {
         // Buy skips
-        if (inventoryManager.gems <= int.Parse(skips.costText.text)) {
-        // if (inventoryManager.gems >= int.Parse(skips.costText.text)) {
+        // if (inventoryManager.gems <= int.Parse(skips.costText.text)) {
+        if (inventoryManager.gems >= int.Parse(skips.costText.text)) {
             inventoryManager.gems -= int.Parse(skips.costText.text);
             inventoryManager.skips++;
             inventoryManager.SaveInventory();
@@ -64,8 +64,8 @@ public class ShopCanvasManager : MonoBehaviour
 
     public void OnDestroysButtonPressed() {
         // Buy destroys
-        if (inventoryManager.gems <= int.Parse(destroys.costText.text)) {
-        // if (inventoryManager.gems >= int.Parse(destroys.costText.text)) {
+        // if (inventoryManager.gems <= int.Parse(destroys.costText.text)) {
+        if (inventoryManager.gems >= int.Parse(destroys.costText.text)) {
             inventoryManager.gems -= int.Parse(destroys.costText.text);
             inventoryManager.destroys++;
             inventoryManager.SaveInventory();
@@ -74,8 +74,8 @@ public class ShopCanvasManager : MonoBehaviour
 
     public void OnExtraEnlargesButtonPressed() {
         // Buy extra enlarges
-        if (inventoryManager.gems <= int.Parse(extraEnlarges.costText.text)) {
-        // if (inventoryManager.gems >= int.Parse(extraEnlarges.costText.text)) {
+        // if (inventoryManager.gems <= int.Parse(extraEnlarges.costText.text)) {
+        if (inventoryManager.gems >= int.Parse(extraEnlarges.costText.text)) {
             inventoryManager.gems -= int.Parse(extraEnlarges.costText.text);
             inventoryManager.extraEnlarges++;
             inventoryManager.SaveInventory();
@@ -84,8 +84,8 @@ public class ShopCanvasManager : MonoBehaviour
 
     public void OnExtraShrinksButtonPressed() {
         // Buy extra shrinks
-        if (inventoryManager.gems <= int.Parse(extraShrinks.costText.text)) {
-        // if (inventoryManager.gems >= int.Parse(extraShrinks.costText.text)) {
+        // if (inventoryManager.gems <= int.Parse(extraShrinks.costText.text)) {
+        if (inventoryManager.gems >= int.Parse(extraShrinks.costText.text)) {
             inventoryManager.gems -= int.Parse(extraShrinks.costText.text);
             inventoryManager.extraShrinks++;
             inventoryManager.SaveInventory();

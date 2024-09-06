@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 using TMPro;
+using UnityEngine.UI;
 
 public class UsePowerupManager : MonoBehaviour, IPowerupManager {
 
@@ -68,6 +69,39 @@ public class UsePowerupManager : MonoBehaviour, IPowerupManager {
     // Update is called once per frame
     void Update() {
         DisplayPowerupInventoryValues();
+        ChangeButtonColor();
+    }
+
+    private void ChangeButtonColor() {
+        if (inventoryManager.extraTime == 0) {
+            timeButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOffColor;
+        } else {
+            timeButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOnColor;
+        }
+
+        if (inventoryManager.skips == 0) {
+            skipButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOffColor;
+        } else {
+            skipButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOnColor;
+        }
+
+        if (inventoryManager.destroys == 0) {
+            destroyButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOffColor;
+        } else {
+            destroyButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOnColor;
+        }
+
+        if (inventoryManager.extraEnlarges == 0) {
+            enlargeButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOffColor;
+        } else {
+            enlargeButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOnColor;
+        }
+
+        if (inventoryManager.extraShrinks == 0) {
+            shrinkButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOffColor;
+        } else {
+            shrinkButton.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Constants.buttonOnColor;
+        }
     }
 
     private void DisplayPowerupInventoryValues() {

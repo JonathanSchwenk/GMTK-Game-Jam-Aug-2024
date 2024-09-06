@@ -58,6 +58,11 @@ public class GameOverCanvasManager : MonoBehaviour {
     public void OnReplayPressed() {
         // Resets the game state and starts a new round
         gamePieceManager.InitRoundStats();
+        
+        // Reset camera
+        orthoCamera.SetActive(true);
+        cityCamera.SetActive(false);
+
         gameManager.UpdateGameState(GameState.Playing);
 
         audioManager.PlaySFX("UIClick_General");

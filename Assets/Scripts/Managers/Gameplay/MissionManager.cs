@@ -103,6 +103,39 @@ public class MissionManager : MonoBehaviour, IMissionManager {
             totalChains = new TotalChains();
             totalAreas = new TotalAreas();
             totalGamePieces = new TotalGamePieces();
+
+            // Need to init these lists
+        totalChains = new TotalChains() {
+            cityChains = new List<float>(),
+            egyptChains = new List<float>(),
+            japanChains = new List<float>(),
+            medievalChains = new List<float>(),
+            neighborhoodChains = new List<float>(),
+            pirateChains = new List<float>(),
+            scifiChains = new List<float>(),
+            westernChains = new List<float>()
+        };
+
+        totalAreas = new TotalAreas() {
+            cityAreas = new List<float>(),
+            egyptAreas = new List<float>(),
+            japanAreas = new List<float>(),
+            medievalAreas = new List<float>(),
+            neighborhoodAreas = new List<float>(),
+            pirateAreas = new List<float>(),
+            scifiAreas = new List<float>(),
+            westernAreas = new List<float>()
+        };
+        totalGamePieces = new TotalGamePieces() {
+            cityGamePieces = 0,
+            egyptGamePieces = 0,
+            japanGamePieces = 0,
+            medievalGamePieces = 0,
+            neighborhoodGamePieces = 0,
+            pirateGamePieces = 0,
+            scifiGamePieces = 0,
+            westernGamePieces = 0
+        };
         }
     }
 
