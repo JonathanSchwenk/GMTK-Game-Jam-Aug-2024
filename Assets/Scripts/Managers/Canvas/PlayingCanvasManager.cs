@@ -16,7 +16,9 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
     // [SerializeField] private TextMeshProUGUI pauseText;
     [SerializeField] private GameObject pauseIcon;
     [SerializeField] private GameObject playIcon;
-    [SerializeField] private TextMeshProUGUI pointsEarnedText;
+    [SerializeField] private TextMeshProUGUI pointsEarnedText_1;
+    [SerializeField] private TextMeshProUGUI pointsEarnedText_2;
+    [SerializeField] private TextMeshProUGUI pointsEarnedText_3;
     [SerializeField] private TextMeshProUGUI gemsText;
     [SerializeField] private TextMeshProUGUI areaText;
 
@@ -64,7 +66,9 @@ public class PlayingCanvasManager : MonoBehaviour, IPlayingCanvasManager {
             nameText.text = "Name";
         }
         timerText.text = countdownTimer.ToString("F1");
-        pointsEarnedText.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
+        pointsEarnedText_1.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
+        pointsEarnedText_2.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
+        pointsEarnedText_3.text = Mathf.RoundToInt(gamePieceManager.pointsEarned).ToString();
         areaText.text = gamePieceManager.gamePieceArea.ToString("F2");
 
         UpdateButtonsFill();

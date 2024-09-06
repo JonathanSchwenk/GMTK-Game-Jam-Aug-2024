@@ -16,7 +16,7 @@ public class UsePowerupManager : MonoBehaviour, IPowerupManager {
 
     private GameObject[] fanButtons;
     private float animationDuration = 0.5f;  // Duration of the animation
-    private float spreadDistance = 100f;  // How far the buttons spread out
+    private float spreadDistance = 350f;  // How far the buttons spread out
     private Vector2[] directions;   // Directions for the buttons to fan out
 
     private IAudioManager audioManager;
@@ -80,19 +80,21 @@ public class UsePowerupManager : MonoBehaviour, IPowerupManager {
         }
     }
 
-    private IEnumerator FanOutButton(GameObject button, Vector3 startScale, Vector3 endScale, Vector3 startPosition, Vector3 endPosition) {
+    private IEnumerator FanOutButton(RectTransform buttonRect, Vector3 startScale, Vector3 endScale, Vector2 startPosition, Vector2 endPosition) {
         float elapsedTime = 0f;
 
         while (elapsedTime < animationDuration) {
-            button.transform.position = Vector3.Lerp(startPosition, endPosition, elapsedTime / animationDuration);
-            button.transform.localScale = Vector3.Lerp(startScale, endScale, elapsedTime / animationDuration);
+            // Lerp the anchoredPosition for UI elements
+            buttonRect.anchoredPosition = Vector2.Lerp(startPosition, endPosition, elapsedTime / animationDuration);
+            buttonRect.localScale = Vector3.Lerp(startScale, endScale, elapsedTime / animationDuration);
 
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        button.transform.position = endPosition;
-        button.transform.localScale = endScale;
+        // Ensure the final position and scale are set properly at the end of the animation
+        buttonRect.anchoredPosition = endPosition;
+        buttonRect.localScale = endScale;
     }
 
     // Opens the powerup menu
@@ -101,15 +103,25 @@ public class UsePowerupManager : MonoBehaviour, IPowerupManager {
         if (gamePieceManager.activelyDestroying) {
             return;
         }
+
         audioManager.PlaySFX("UIClick_General");
 
         // Stop time to allow you to pick something
         playingCanvasManager.countdownTimerIncrement = 0f;
-        
 
         // Open the powerup menu
         for (int i = 0; i < fanButtons.Length; i++) {
-            StartCoroutine(FanOutButton(fanButtons[i], Vector3.zero, Vector3.one, ogPowerupButton.transform.position, ogPowerupButton.transform.position + (Vector3)directions[i] * spreadDistance));
+            // Calculate start and end positions using RectTransform.anchoredPosition for UI elements
+            RectTransform buttonRectTransform = fanButtons[i].GetComponent<RectTransform>();
+            RectTransform ogButtonRectTransform = ogPowerupButton.GetComponent<RectTransform>();
+
+            // Start at the original button's position
+            Vector2 startPos = ogButtonRectTransform.anchoredPosition;
+            // End position is based on the fan directions and spread distance
+            Vector2 endPos = ogButtonRectTransform.anchoredPosition + directions[i] * spreadDistance;
+
+            // Start coroutine to fan out the button
+            StartCoroutine(FanOutButton(buttonRectTransform, Vector3.zero, Vector3.one, startPos, endPos));
         }
     }
 
@@ -128,8 +140,15 @@ public class UsePowerupManager : MonoBehaviour, IPowerupManager {
 
         // Close the powerup menu
         for (int i = 0; i < fanButtons.Length; i++) {
-            StartCoroutine(FanOutButton(fanButtons[i], Vector3.one, Vector3.zero, fanButtons[i].transform.position, ogPowerupButton.transform.position));
-            fanButtons[i].transform.localScale = Vector3.zero;  // Start with a scale of zero (invisible)
+            // Get the RectTransform of each button
+            RectTransform buttonRect = fanButtons[i].GetComponent<RectTransform>();
+            RectTransform ogButtonRect = ogPowerupButton.GetComponent<RectTransform>();
+
+            // Start coroutine to reverse the fan out (i.e., fan in)
+            StartCoroutine(FanOutButton(buttonRect, Vector3.one, Vector3.zero, buttonRect.anchoredPosition, ogButtonRect.anchoredPosition));
+
+            // Immediately set the scale to zero after the coroutine to make the buttons invisible
+            fanButtons[i].transform.localScale = Vector3.zero;
         }
     }
 

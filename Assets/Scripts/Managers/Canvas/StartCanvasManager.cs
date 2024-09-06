@@ -4,6 +4,7 @@ using UnityEngine;
 using Dorkbots.ServiceLocatorTools;
 using TMPro;
 using System;
+using UnityEngine.UI;
 
 public class StartCanvasManager : MonoBehaviour
 {
@@ -16,6 +17,12 @@ public class StartCanvasManager : MonoBehaviour
     [SerializeField] private GameObject sfxOff;
     [SerializeField] private GameObject musicOn;
     [SerializeField] private GameObject musicOff;
+
+    [SerializeField] private Sprite leftArrow;
+    [SerializeField] private Sprite rightArrow;
+    [SerializeField] private Image missionButton;
+    [SerializeField] private Image shopButton;
+
 
     private IGameManager gameManager;
     private IGamePieceManager gamePieceManager;
@@ -42,6 +49,17 @@ public class StartCanvasManager : MonoBehaviour
     {
         bestScoreValue.text = Mathf.RoundToInt(saveManager.saveData.highScore).ToString();
         bestChainValue.text = Mathf.RoundToInt(saveManager.saveData.highChain).ToString();
+
+        if (menuCanvasManager.menuCanvasState == MenuCanvasState.Missions) {
+            missionButton.sprite = rightArrow;
+        } else {
+            missionButton.sprite = leftArrow;
+        }
+        if (menuCanvasManager.menuCanvasState == MenuCanvasState.Shop) {
+            shopButton.sprite = leftArrow;
+        } else {
+            shopButton.sprite = rightArrow;
+        }
     }
 
     public void OnStartButtonPressed() {
@@ -138,12 +156,20 @@ public class StartCanvasManager : MonoBehaviour
     public void OnShopButtonPressed() {
         audioManager.PlaySFX("UIClick_General");
 
-        menuCanvasManager.UpdateCanvasState(MenuCanvasState.Shop);
+        if (menuCanvasManager.menuCanvasState == MenuCanvasState.Shop) {
+            menuCanvasManager.UpdateCanvasState(MenuCanvasState.Start);
+        } else {
+            menuCanvasManager.UpdateCanvasState(MenuCanvasState.Shop);
+        }
     }
 
     public void OnMissionsButtonPressed() {
         audioManager.PlaySFX("UIClick_General");
 
-        menuCanvasManager.UpdateCanvasState(MenuCanvasState.Missions);
+        if (menuCanvasManager.menuCanvasState == MenuCanvasState.Missions) {
+            menuCanvasManager.UpdateCanvasState(MenuCanvasState.Start);
+        } else {
+            menuCanvasManager.UpdateCanvasState(MenuCanvasState.Missions);
+        }
     }
 }
